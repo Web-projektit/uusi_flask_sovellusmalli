@@ -1,0 +1,126 @@
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 10:58:15] "[32mGET /auth/confirm HTTP/1.1[0m" 302 -
+ERROR:root:2024-03-25 10:58:15.735322 sähköpostilähetysvirhe: SMTPAuthenticationError
+ERROR:root:(535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials a23-20020a195f57000000b00513b4057a70sm1005899lfj.18 - gsmtp')
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 10:58:15] "[32mGET / HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 10:58:15] "GET /auth/unconfirmed HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'C:\\Projektit\\projektit_flask\\sovellusmalli\\app\\email.py', reloading
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 11:13:23] "[32mGET /auth/confirm HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 11:13:23] "[32mGET / HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 11:13:23] "GET /auth/unconfirmed HTTP/1.1" 200 -
+ERROR:root:2024-03-25 11:15:29 sähköpostilähetysvirhe: TimeoutError
+ERROR:root:[WinError 10060] Yhteyden muodostamisyritys epäonnistui, koska vastapuoli ei vastannut oikein määritetyn ajan kuluessa, tai aiemmin muodostettu yhteys epäonnistui, koska palvelin, johon yritettiin muodostaa yhteys, ei vastannut
+INFO:werkzeug: * Detected change in 'C:\\Projektit\\projektit_flask\\sovellusmalli\\app\\email.py', reloading
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 11:17:23] "[32mGET /auth/confirm HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 11:17:23] "[32mGET / HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 11:17:23] "GET /auth/unconfirmed HTTP/1.1" 200 -
+INFO:root:Sähköposti lähetetty
+INFO:werkzeug: * Detected change in 'C:\\Projektit\\projektit_flask\\sovellusmalli\\config.py', reloading
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:28:33] "[32mPOST /auth/register HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:28:33] "GET /auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:28:34] "[33mGET /static/site.css HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:28:34] "[33mGET /static/pagination.css HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:28:34] "[33mGET /static/scripts.js HTTP/1.1[0m" 404 -
+INFO:root:Sähköposti lähetetty
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:29:27] "[32mGET /auth/confirm/{"confirm":%201}.AwY1KmBpdwjdZCi5dw_h7nnhsN8 HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:29:27] "GET /auth/login?next=/auth/confirm/{"confirm":%25201}.AwY1KmBpdwjdZCi5dw_h7nnhsN8 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:29:27] "[33mGET /static/site.css HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:29:27] "[33mGET /static/pagination.css HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:29:27] "[33mGET /static/scripts.js HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:29:46] "GET /auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:29:47] "[33mGET /static/site.css HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:29:47] "[33mGET /static/pagination.css HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:29:47] "[33mGET /static/scripts.js HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:29:55] "POST /auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:29:55] "[33mGET /static/site.css HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:29:55] "[33mGET /static/pagination.css HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:29:56] "[33mGET /static/scripts.js HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:31:50] "GET /auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:31:52] "GET /auth/login?next=/auth/confirm/{"confirm":%25201}.AwY1KmBpdwjdZCi5dw_h7nnhsN8 HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'C:\\Projektit\\projektit_flask\\sovellusmalli\\app\\models.py', reloading
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:48:42] "[32mPOST /auth/register HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:48:42] "GET /auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:48:42] "[33mGET /static/site.css HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:48:42] "[33mGET /static/scripts.js HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:48:42] "[33mGET /static/pagination.css HTTP/1.1[0m" 404 -
+INFO:root:Sähköposti lähetetty
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:49:35] "[32mGET /auth/confirm/eyJjb25maXJtIjoyfQ.ZgFkmg.dKpoTZ0M392M-HIIKkirRqYK7EM HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:49:35] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:49:35] "[33mGET /static/pagination.css HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:49:35] "[33mGET /static/site.css HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [25/Mar/2024 13:49:35] "[33mGET /static/scripts.js HTTP/1.1[0m" 404 -
+INFO:werkzeug: * Detected change in 'C:\\Projektit\\projektit_flask\\sovellusmalli\\app\\models.py', reloading
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 09:59:42] "[32mPOST /auth/reset HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 09:59:42] "GET /auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 09:59:42] "GET /static/site.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 09:59:42] "GET /static/pagination.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 09:59:42] "GET /static/scripts.js HTTP/1.1" 200 -
+INFO:root:Sähköposti lähetetty
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:00:13] "GET /auth/reset/eyJyZXNldCI6Mn0.ZgKAbg.mfm9GZTwbR-ZEHRMOAMW4QsxQks HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:00:13] "[36mGET /static/site.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:00:13] "[36mGET /static/pagination.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:00:13] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:00:27] "[32mPOST /auth/reset/eyJyZXNldCI6Mn0.ZgKAbg.mfm9GZTwbR-ZEHRMOAMW4QsxQks HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:00:27] "GET /auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:00:28] "[36mGET /static/site.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:00:28] "[36mGET /static/pagination.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:00:28] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:00:51] "[36mGET /static/pagination.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:00:51] "[36mGET /static/site.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:01:23] "POST /auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:01:23] "GET /static/site.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:01:23] "GET /static/pagination.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:01:23] "GET /static/scripts.js HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'C:\\Projektit\\projektit_flask\\sovellusmalli\\app\\models.py', reloading
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:09:52] "[32mPOST /auth/reset HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:09:52] "GET /auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:09:52] "GET /static/site.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:09:52] "GET /static/pagination.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:09:53] "GET /static/scripts.js HTTP/1.1" 200 -
+INFO:root:Sähköposti lähetetty
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:08] "GET /auth/reset/eyJyZXNldCI6Mn0.ZgKC0A.bEaqUk9mDiI88E18l8Rqtx0AiUo HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:08] "[36mGET /static/site.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:08] "[36mGET /static/pagination.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:08] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:20] "[32mPOST /auth/reset/eyJyZXNldCI6Mn0.ZgKC0A.bEaqUk9mDiI88E18l8Rqtx0AiUo HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:20] "GET /auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:21] "[36mGET /static/pagination.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:21] "[36mGET /static/site.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:21] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:33] "[32mPOST /auth/login HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:34] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:34] "[36mGET /static/site.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:34] "[36mGET /static/pagination.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:34] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:45] "[32mGET /auth/logout HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:46] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:46] "[36mGET /static/site.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:46] "[36mGET /static/pagination.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:46] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:50] "GET /auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:51] "[36mGET /static/site.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:51] "[36mGET /static/pagination.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:10:51] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:11:01] "POST /auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:11:01] "[36mGET /static/site.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:11:01] "[36mGET /static/pagination.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:11:01] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:11:22] "POST /auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:08] "[32mPOST /auth/login HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:08] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:08] "[36mGET /static/site.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:08] "[36mGET /static/pagination.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:09] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:11] "[32mGET /auth/logout HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:11] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:11] "[36mGET /static/site.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:11] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:11] "[36mGET /static/pagination.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:14] "GET /auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:14] "[36mGET /static/site.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:15] "[36mGET /static/pagination.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:15] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:23] "POST /auth/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:23] "[36mGET /static/site.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:23] "[36mGET /static/pagination.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [26/Mar/2024 10:21:23] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+INFO:werkzeug: * Detected change in 'C:\\Projektit\\projektit_flask\\sovellusmalli\\app\\auth\\views.py', reloading
