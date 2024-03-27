@@ -1,3 +1,16 @@
+//moment.tz.setDefault("Europe/Helsinki")
+
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    navbarToggler.addEventListener('click', (event) => {
+        //console.log(navbarToggler.getAttribute('aria-expanded'))
+        if (navbarToggler.getAttribute('aria-expanded') === 'true') {
+          navbarToggler.innerHTML = '<i class="fa fa-times"></i>';
+        } else {
+          navbarToggler.innerHTML = '<i class="fa fa-bars"></i>';
+        }
+    });
+
+
 const poista_is_invalid = event => {
     let element = event.target;
     if (element.classList.contains('is-invalid')){

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime,timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from flask import current_app
@@ -79,8 +79,8 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(64))
     location = db.Column(db.String(64))
     about_me = db.Column(db.Text())
-    member_since = db.Column(db.DateTime(), default=datetime.now)
-    last_seen = db.Column(db.DateTime(), default=datetime.now)
+    member_since = db.Column(db.DateTime(), default=datetime.now())
+    last_seen = db.Column(db.DateTime(), default=datetime.now(timezone.utc))
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -164,8 +164,8 @@ class User(UserMixin, db.Model):
         return self.can(Permission.ADMIN)
 
     def ping(self):
-        self.last_seen = datetime.now()
-        db.session.add(self)
+        self.last_seen = datetime.now(timezone.utc)
+        db.session.commit()
 
     def __repr__(self):
         return '<User %r>' % self.username

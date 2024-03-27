@@ -14,6 +14,8 @@ def index():
 
 @main.route('/user/<username>')
 def user(username):
+    # Huom. user.html:ssä user.last_seen ilmaisee ping-metodilla annetun ajan,
+    # eikä tietokantaan tallennettua aikaa.
     user = User.query.filter_by(username=username).first_or_404()
     return render_template('user.html', user=user)
 
