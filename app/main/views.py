@@ -65,3 +65,10 @@ def edit_profile_admin(id):
     form.about_me.data = user.about_me
     return render_template('edit_profile.html', form=form, user=user)
 
+@main.route('/users', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def users():
+    users = User.query.all()
+    return render_template('users.html', users=users)
+
