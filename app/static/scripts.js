@@ -10,15 +10,6 @@
         }
     });
 
-    navbarToggler.addEventListener('click', (event) => {
-      //console.log(navbarToggler.getAttribute('aria-expanded'))
-      if (navbarToggler.getAttribute('aria-expanded') === 'true') {
-        navbarToggler.innerHTML = '<i class="fa fa-times"></i>';
-      } else {
-        navbarToggler.innerHTML = '<i class="fa fa-bars"></i>';
-      }
-  });
-
 
 const poista_is_invalid = event => {
     let element = event.target;
@@ -64,21 +55,28 @@ document.addEventListener('DOMContentLoaded', () => {});
           jolloin Bootstrap tuo .invalid-feedback-elementin näkyviin, ja tekstinä näkyy näin
           selaimen oma validointivirhetyyppikohtainen validointiviesti (selaimen kielellä). 
           */
-          
           /* Quick_form ei lisää Selaimen validointivirheestä invalid-feedback-elementtiä,
              joten se lisätään, jos selain asettaa kentän :invalid-tilaan eikä sitä ole
              lisätty ennestään. */ 
           document.querySelectorAll("input:invalid")
           .forEach(element => {
             console.log(element.name+':'+element.validationMessage)
-            /*if (!element.nextElementSibling){
+            /* Tätä ei tarvita, jos quick_form lisää invalid-feedback-elementin
+              if (!element.nextElementSibling){
                 let feedback = document.createElement('div')
                 feedback.classList.add('invalid-feedback')
                 element.parentElement.appendChild(feedback)
-                }*/
+                } */
+            /* Tämä tarvitaan näyttämään mahdollinen omakin validointiviesti,
+               esim. salasana ei täsmää. */
             element.nextElementSibling.innerHTML = element.validationMessage
-            element.addEventListener('input', () => 
+            /*
+              Tätä ei todennäköisesti tarvita, ajatuksena on palauttaa selaimen oma validointiviesti,
+              mutta oma tarkistus on jo saattanut asettaa elementin :valid-tilaan.   
+            */
+              element.addEventListener('input', () => 
               element.nextElementSibling.innerHTML = element.validationMessage)
+              
             })    
           }
         form.classList.add('was-validated')
