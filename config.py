@@ -15,6 +15,7 @@ class Config:
     SOVELLUSMALLI_MAIL_SUBJECT_PREFIX = os.environ.get('SOVELLUSMALLI_MAIL_SUBJECT_PREFIX','[Sovellusmalli]')
     SOVELLUSMALLI_MAIL_SENDER = 'Sovellusmalli Admin <sovellusmalli@example.com>'
     SOVELLUSMALLI_ADMIN = os.environ.get('SOVELLUSMALLI_ADMIN')
+    SOVELLUSMALLI_POSTS_PER_PAGE = 25
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     @staticmethod
@@ -29,7 +30,7 @@ class DevelopmentConfig(Config):
     DB_NAME = os.environ.get('LOCAL_DB_NAME') or 'flask_sovellusmalli'
     DB_SERVER = os.environ.get('LOCAL_DB_SERVER') or 'localhost'
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + DB_USERNAME + ':' + DB_PASSWORD + '@' + DB_SERVER + ':3306/' + DB_NAME
-
+    WTF_CSRF_ENABLED = True
     #SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
     #    'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
