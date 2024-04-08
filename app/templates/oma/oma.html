@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<link href="{{ url_for('static', filename='oma.css') }}" rel="stylesheet">
+ {% endblock %}
+
+ {% block title %}Oma{% endblock %}
+
+{% block page_content %}
+<script>
+alert('current_user:' + '{{ current_user.id }}')
+</script>
+<div class="oma">
+<p>Käyttäjä: {{name}},{{ current_user.id }}</p>        
+</div>
+{% endblock %}
