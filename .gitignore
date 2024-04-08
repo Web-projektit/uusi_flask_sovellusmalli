@@ -43,4 +43,5 @@ nosetests.xml
 .flaskenv
 .env
 *.txt
+!requirements.txt
 *.log
