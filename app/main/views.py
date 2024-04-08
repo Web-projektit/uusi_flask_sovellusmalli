@@ -85,6 +85,9 @@ def users():
             query_values = query_values[:-1]
             query = query_start + query_values + query_end
             # print("\n"+query+"\n")
+            '''INSERT INTO users (id,active) VALUES (6,1),(7,1) 
+               ON DUPLICATE KEY UPDATE active = VALUES(active)
+            '''
             # result = db.session.execute('SELECT * FROM my_table WHERE my_column = :val', {'val': 5})
             db.session.execute(query)
             db.session.commit()
