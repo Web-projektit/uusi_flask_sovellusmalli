@@ -1,0 +1,42 @@
+{
+    "valueMissing": {
+        "en": "{field} is required.",
+        "fi": "{field} on pakollinen."
+    },
+    "typeMismatch": {
+        "en": "Please enter a valid {field}.",
+        "fi": "Anna kelvollinen {field}."
+    },
+    "patternMismatch": {
+        "en": "The {field} format is invalid. It should match: {pattern}",
+        "fi": "{field} muoto on virheellinen. Sen tulisi vastata: {pattern}"
+    },
+    "tooShort": {
+        "en": "{field} must be at least {min} characters long.",
+        "fi": "{field} on oltava vähintään {min} merkkiä pitkä."
+    },
+    "tooLong": {
+        "en": "{field} must be no longer than {max} characters.",
+        "fi": "{field} ei saa olla yli {max} merkkiä pitkä."
+    },
+    "rangeUnderflow": {
+        "en": "{field} must be greater than or equal to {min}.",
+        "fi": "{field} tulee olla suurempi tai yhtä suuri kuin {min}."
+    },
+    "rangeOverflow": {
+        "en": "{field} must be less than or equal to {max}.",
+        "fi": "{field} tulee olla pienempi tai yhtä suuri kuin {max}."
+    },
+    "stepMismatch": {
+        "en": "{field} must be a valid step value.",
+        "fi": "{field} tulee olla kelvollinen askelarvo."
+    },
+    "badInput": {
+        "en": "{field} is badly formatted.",
+        "fi": "{field} on virheellisesti muotoiltu."
+    },
+    "customError":{
+          "en": "An error occurred with {field}.",
+          "fi": "Kenttä {field} on virheellinen."
+        }
+}
