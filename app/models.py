@@ -79,6 +79,9 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(64))
     location = db.Column(db.String(64))
     about_me = db.Column(db.Text())
+    #Huom. versio-tiedostossa boolean-oletusarvo asetetaan manuaalisesti:
+    #sa.Column('active', sa.Boolean(), nullable=False,server_default=sa.sql.expression.true())
+    active = db.Column(db.Boolean, default=True)
     member_since = db.Column(db.DateTime(), default=datetime.now())
     last_seen = db.Column(db.DateTime(), default=datetime.now(timezone.utc))
 

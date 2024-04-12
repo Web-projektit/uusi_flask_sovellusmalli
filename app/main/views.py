@@ -5,6 +5,7 @@ from .forms import EditProfileForm, EditProfileAdminForm
 from .. import db
 from ..models import Role, User
 from ..decorators import admin_required
+from sqlalchemy import text
 
 
 @main.route('/')
@@ -84,12 +85,12 @@ def users():
                     query_values += "("+v+",0),"
             query_values = query_values[:-1]
             query = query_start + query_values + query_end
-            # print("\n"+query+"\n")
+            print("\n"+query+"\n")
             '''INSERT INTO users (id,active) VALUES (6,1),(7,1) 
                ON DUPLICATE KEY UPDATE active = VALUES(active)
             '''
             # result = db.session.execute('SELECT * FROM my_table WHERE my_column = :val', {'val': 5})
-            db.session.execute(query)
+            db.session.execute(text(query))
             db.session.commit()
             # return query
             #return str(request.form.getlist('users')) + \

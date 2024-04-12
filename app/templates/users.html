@@ -19,8 +19,8 @@
 {% endif %}
 </td>
 <td class="td-keskitetty">
-{% if current_user.id != user.id %}    
-<a title="poista" class="trash-space" href="#" onclick="poista('{{ user.id }}','{{ user.name }}')">
+{% if current_user.id != user.id %}   
+<a title="poista" class="trash-space" href="#" onclick="poista('{{ user.id }}','{{ user.name or user.username }}')">
 <i class="fas fa-trash-alt"></i></a>
 {% endif %}
 </td>
