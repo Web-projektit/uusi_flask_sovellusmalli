@@ -55,6 +55,10 @@ def logout():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
+        # Lyhyempi tapa tallentaa uusi käyttäjä tietokantaan
+        # new_user = User()
+        # form.email.data=form.email.data.lower()
+        # form.populate_obj(new_user)
         user = User(email=form.email.data.lower(),
                     username=form.username.data,
                     password=form.password.data)
