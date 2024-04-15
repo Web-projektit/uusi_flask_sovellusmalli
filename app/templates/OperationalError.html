@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Sovellusmalli - Operational Error{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h3>Tietokantayhteys ei toimi. Yritä myöhemmin uudelleen.<br>
+    <small>Virhe: {{ error_message }}<br>(Virhekoodi: {{ error_code}})</small>
+    </h3>
+</div>
+{% endblock %}

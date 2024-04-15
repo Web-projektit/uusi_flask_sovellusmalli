@@ -26,15 +26,14 @@
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Flask-sovellus</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-
       <i class="fa fa-bars"></i>
-
       </button>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <a class="nav-link{{ ' active' if request.endpoint == 'main.index' }}" href="{{ url_for('main.index') }}">Home</a>
           {% if current_user.is_authenticated %}
           <a class="nav-link{{ ' active' if request.endpoint == 'main.user' }}" href="{{ url_for('main.user', username=current_user.username) }}">Profile</a>
+          <a class="nav-link{{ ' active' if request.endpoint == 'main.malli' }}" href="{{ url_for('main.malli') }}">Esimerkki</a>
           {% endif %}
           {% if current_user.is_administrator() %}
           <a class="nav-link{{ ' active' if request.endpoint == 'main.users' }}" href="{{ url_for('main.users') }}">Users</a>

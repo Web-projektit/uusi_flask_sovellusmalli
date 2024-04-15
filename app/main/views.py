@@ -12,6 +12,10 @@ from sqlalchemy import text
 def index():
     return render_template('index.html')
 
+@main.route('/kokeilu')
+@login_required
+def malli():
+    return render_template('esimerkki.html')
 
 @main.route('/user/<username>')
 def user(username):
