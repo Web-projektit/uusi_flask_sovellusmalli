@@ -10,9 +10,13 @@
 <div class="col-md-4">
     {{ wtf.quick_form(form,novalidate=True,extra_classes='needs-validation') }}
 </div>
+<div>
+<p>Sähköpostiosoitteen pituus: <span id="pituus"></span></p>    
+</div>
 {% endblock %}
 {% block scripts %}
 {{ super() }}
+<script src="{{ url_for('static', filename='register.js') }}"></script>
 <script>
     var password = document.querySelector("#password")
     var password2 = document.querySelector("#password2");
