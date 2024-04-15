@@ -6,5 +6,5 @@ from . import oma
 @oma.route('/')
 @oma.route('/<name>')
 @login_required
-def oma(name=None):
+def loma(name=None):
     return render_template('oma/oma.html',name=name)
