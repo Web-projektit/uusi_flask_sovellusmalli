@@ -56,12 +56,12 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         # Lyhyempi tapa tallentaa uusi käyttäjä tietokantaan
-        # new_user = User()
-        # form.email.data=form.email.data.lower()
-        # form.populate_obj(new_user)
-        user = User(email=form.email.data.lower(),
-                    username=form.username.data,
-                    password=form.password.data)
+        user = User()
+        form.email.data = form.email.data.lower()
+        form.populate_obj(user)
+        # user = User(email=form.email.data.lower(),
+        #            username=form.username.data,
+        #            password=form.password.data)
         db.session.add(user)
         db.session.commit()
         token = user.generate_confirmation_token()
