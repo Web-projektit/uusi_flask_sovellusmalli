@@ -45,3 +45,5 @@ nosetests.xml
 *.txt
 !requirements.txt
 *.log
+app/profiilikuvat/*
+
