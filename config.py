@@ -29,10 +29,14 @@ class DevelopmentConfig(Config):
     DB_NAME = os.environ.get('DB_NAME') or 'flask_sovellusmalli'
     DB_SERVER = os.environ.get('DB_SERVER') or 'localhost'
     DB_PORT = os.environ.get('DB_PORT') or '3306'
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + DB_USERNAME + ':' + DB_PASSWORD + '@' + DB_SERVER + ':' + DB_PORT +'/' + DB_NAME
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + DB_USERNAME + ':' + DB_PASSWORD + '@' + DB_SERVER + ':' + DB_PORT + '/' + DB_NAME
     WTF_CSRF_ENABLED = True
     #SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
     #    'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+
+class AzureConfig(DevelopmentConfig):
+    DEBUG = False
+
 
 class TestingConfig(Config):
     TESTING = True
