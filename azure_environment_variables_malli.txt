@@ -1,0 +1,77 @@
+[
+  {
+    "name": "DB_NAME",
+    "value": "flask_sovellusmalli",
+    "slotSetting": false
+  },
+  {
+    "name": "DB_PASSWORD",
+    "value": "db_password",
+    "slotSetting": false
+  },
+  {
+    "name": "DB_SERVER",
+    "value": "db_server.westeurope.cloudapp.azure.com",
+    "slotSetting": false
+  },
+  {
+    "name": "DB_USERNAME",
+    "value": "db_username",
+    "slotSetting": false
+  },
+  {
+    "name": "DB_PORT",
+    "value": "db_port",
+    "slotSetting": false
+  },
+  {
+    "name": "FLASK_APP",
+    "value": "flask_app",
+    "slotSetting": false
+  },
+  {
+    "name": "FLASK_CONFIG",
+    "value": "development",
+    "slotSetting": false
+  },
+  {
+    "name": "MAILTRAP_MAIL_PASSWORD",
+    "value": "password",
+    "slotSetting": false
+  },
+  {
+    "name": "MAILTRAP_MAIL_PORT",
+    "value": "2525",
+    "slotSetting": false
+  },
+  {
+    "name": "MAILTRAP_MAIL_SERVER",
+    "value": "smtp.mailtrap.io",
+    "slotSetting": false
+  },
+  {
+    "name": "MAILTRAP_MAIL_USE_TLS",
+    "value": "1",
+    "slotSetting": false
+  },
+  {
+    "name": "MAILTRAP_MAIL_USERNAME",
+    "value": "username",
+    "slotSetting": false
+  },
+  {
+    "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+    "value": "1",
+    "slotSetting": false
+  },
+  {
+    "name": "WEBSITE_HTTPLOGGING_RETENTION_DAYS",
+    "value": "3",
+    "slotSetting": false
+  },
+  {
+    "name": "WEBSITES_PORT",
+    "value": "8000",
+    "slotSetting": false
+  }
+]
