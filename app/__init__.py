@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from config import config
 from flask_wtf.csrf import CSRFProtect
+from flask_cors import CORS
 
 bootstrap = Bootstrap()
 # fa = FontAwesome()
@@ -20,6 +21,7 @@ csrf = CSRFProtect()
 
 def create_app(config_name):
     app = Flask(__name__)
+    CORS(app,supports_credentials=True,expose_headers=["Content-Type","X-CSRFToken"])
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 

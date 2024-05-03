@@ -1,4 +1,5 @@
-from flask import render_template, redirect, request, jsonify, url_for, flash
+import sys
+from flask import render_template, redirect, request, jsonify, url_for, flash, make_response
 from flask_login import login_user, logout_user, login_required, \
     current_user
 from . import restapi
@@ -7,6 +8,28 @@ from ..models import User
 from ..email import send_email
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm,\
     PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm
+from flask_wtf.csrf import generate_csrf,CSRFError
+
+def createResponse(message):
+    # CORS:n vaatimat Headerit
+    default_origin = 'http://localhost:3000'
+    origin = request.headers.get('Origin',default_origin)
+    response = make_response(jsonify(message))  
+    # Määritetään CORS-alustuksessa
+    # response.headers.set('Access-Control-Allow-Credentials','true')
+    # Jos vaaditaan muuta kuin CORS-alustuksen '*'
+    response.headers.set('Access-Control-Allow-Origin',origin) 
+    return response
+
+
+@restapi.app_errorhandler(CSRFError)
+def handle_csrf_error(e):
+    message = {'virhe':f'csrf-token puuttuu ({e.description}), headers:{str(request.headers)}'}
+    # print(f"\nPRINT:reactapi CSFRError,SIGNIN headers:{str(request.headers)}\n")
+    sys.stderr.write(f"\nreactapi CSFRError,headers:{str(request.headers)}\n")
+    return createResponse(message)
+
+
 
 @restapi.before_app_request
 def before_request():
@@ -17,6 +40,17 @@ def before_request():
                 and request.blueprint != 'auth' \
                 and request.endpoint != 'static':
             return redirect(url_for('auth.unconfirmed'))
+
+@restapi.route("/getcsrf", methods=["GET"])
+# Määritetään CORS-alustuksessa
+# @cross_origin(supports_credentials=True)
+def get_csrf():
+    token = generate_csrf()
+    response = jsonify({"detail": "CSRF cookie set"})
+    # Määritetään CORS-alustuksessa
+    # response.headers.set('Access-Control-Expose-Headers','X-CSRFToken') 
+    response.headers.set("X-CSRFToken", token)
+    return response
 
 
 @restapi.route('/unconfirmed')
@@ -68,7 +102,7 @@ def register():
                     'auth/email/confirm', user=user, token=token)
             return jsonify({'message': 'User registered successfully'}), 201
         else:
-            return jsonify({'message': 'Invalid data', 'errors': form.errors}), 400
+            return jsonify({'message': 'Invalid data', 'errors': form.errors})
     return jsonify({'message': 'No data provided'}), 400
 
 
