@@ -53,7 +53,8 @@ def logout():
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegistrationForm()
+    data = request.get_json()
+    form = RegistrationForm(data=data)
     if form.validate_on_submit():
         # Lyhyempi tapa tallentaa uusi käyttäjä tietokantaan
         user = User()

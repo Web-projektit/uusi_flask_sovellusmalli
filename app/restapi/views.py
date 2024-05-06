@@ -1,5 +1,5 @@
 import sys
-from flask import render_template, redirect, request, jsonify, url_for, flash, make_response
+from flask import render_template, redirect, current_app, request, jsonify, url_for, flash, make_response
 from flask_login import login_user, logout_user, login_required, \
     current_user
 from . import restapi
@@ -9,6 +9,8 @@ from ..email import send_email
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm,\
     PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm
 from flask_wtf.csrf import generate_csrf,CSRFError
+from urllib.parse import urlencode
+from itsdangerous import URLSafeTimedSerializer as Serializer
 
 def createResponse(message):
     # CORS:n vaatimat Headerit
@@ -30,7 +32,7 @@ def handle_csrf_error(e):
     return createResponse(message)
 
 
-
+'''
 @restapi.before_app_request
 def before_request():
     if current_user.is_authenticated:
@@ -40,6 +42,7 @@ def before_request():
                 and request.blueprint != 'auth' \
                 and request.endpoint != 'static':
             return redirect(url_for('auth.unconfirmed'))
+'''
 
 @restapi.route("/getcsrf", methods=["GET"])
 # Määritetään CORS-alustuksessa
@@ -78,18 +81,19 @@ def login():
 
 
 @restapi.route('/logout')
-@login_required
+# @login_required
 def logout():
-    logout_user()
-    flash('You have been logged out.')
-    return redirect(url_for('main.index'))
-
+    # logout_user()
+    # flash('You have been logged out.')
+    # return redirect(url_for('main.index'))
+    # Huom. tämä on väliaikainen testaamaton ratkaisu.
+    return jsonify({'message': 'You have been logged out.'})
 
 @restapi.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
     if data is not None:
-        form = RegistrationForm()
+        form = RegistrationForm(data=data)
         if form.validate_on_submit():
             # Lyhyempi tapa tallentaa uusi käyttäjä tietokantaan
             user = User()
@@ -99,7 +103,7 @@ def register():
             db.session.commit()
             token = user.generate_confirmation_token()
             send_email(user.email, 'Confirm Your Account',
-                    'auth/email/confirm', user=user, token=token)
+                    'restapi/email/confirm', user=user, token=token)
             return jsonify({'message': 'OK'}), 201
         else:
             return jsonify({'message': 'Invalid data', 'errors': form.errors})
@@ -107,16 +111,59 @@ def register():
 
 
 @restapi.route('/confirm/<token>')
-@login_required
+# CORS määritetään alustuksessa tai tässä
+# @cross_origin(supports_credentials=True)
+# @login_required
+# Huom. login_required vie login-sivulle, ja kirjautuminen takaisin tänne
 def confirm(token):
+    app = current_app._get_current_object()
+    # app.logger.debug('/confirm,confirmed: %s',current_user.confirmed)
+    app.logger.debug('/confirm,headers:' + str(request.headers))
+    s = Serializer(app.config['SECRET_KEY'])
+    try:
+        data = s.loads(token)
+    except:
+        return jsonify({'message': 'Invalid token'}), 400
+
+    current_user = User.query.get(data.get('confirm'))
+    if current_user is None:
+        return jsonify({'message': 'User not found'}), 404
+
     if current_user.confirmed:
-        return redirect(url_for('main.index'))
+        # Huom. Tähän vain sähköpostilinkistä kirjautuneena.
+        # Siirtyminen uuteen ikkunaan ei-kirjautuneena
+        # Huom. Nyt sama ilmoitus kuin ensi kertaa vahvistuksessa.
+        app.logger.debug('/confirm,REACT_CONFIRMED:' + app.config['REACT_CONFIRMED'])
+        return redirect(app.config['REACT_CONFIRMED'] + '?jo=jo')
+        # message = "Sähköpostiosoite on jo vahvistettu."
+        # return jsonify({'ok':"Virhe",'message':message})
     if current_user.confirm(token):
+        app.logger.debug('/confirm,confirmed here')
         db.session.commit()
-        flash('You have confirmed your account. Thanks!')
+        message = "Sähköpostiosoite on vahvistettu."
+        # redirect_url = f"{app.config['REACT_ORIGIN']}?message={message}"
+        # return redirect(redirect_url)
+        if request.headers.get('Referer'):
+            # Kirjautumisen kautta
+            return jsonify({'ok':"OK",'message':message, 'confirmed':'1'})
+        else:
+            # Sähköpostilinkin kautta suoraan
+            app.logger.debug('\n/confirm,REACT_CONFIRMED:' + app.config['REACT_CONFIRMED']+'\n')
+            return redirect(app.config['REACT_CONFIRMED'])
     else:
-        flash('The confirmation link is invalid or has expired.')
-    return redirect(url_for('main.index'))
+        # Huom. Kun on jo kirjauduttu toisella välilehdellä, Referer-headeriä ei ole.
+        # Suojattu reitti /unfirmed Reactissa johtaa sinne kirjautumisen kautta. 
+        message = 'Vahvistuslinkki on virheellinen tai se ei ole enää voimassa.'
+        # redirect_url = f"{app.config['REACT_UNCONFIRMED']}?message={message}"
+        # return redirect(redirect_url)
+        # return jsonify({'ok':"Virhe",'message':message})
+        query_params = { 'message':message }
+        encoded_params = urlencode(query_params)
+        if request.headers.get('Referer'):
+            # Kirjautumisen kautta
+            return jsonify({'ok':"Virhe",'message':message})
+        return redirect(app.config['REACT_UNCONFIRMED'] + "?" + encoded_params) 
+    # return redirect(app.config['REACT_ORIGIN'])
 
 
 @restapi.route('/confirm')
