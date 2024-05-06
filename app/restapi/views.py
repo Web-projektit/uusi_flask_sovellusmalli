@@ -100,7 +100,7 @@ def register():
             token = user.generate_confirmation_token()
             send_email(user.email, 'Confirm Your Account',
                     'auth/email/confirm', user=user, token=token)
-            return jsonify({'message': 'User registered successfully'}), 201
+            return jsonify({'message': 'OK'}), 201
         else:
             return jsonify({'message': 'Invalid data', 'errors': form.errors})
     return jsonify({'message': 'No data provided'}), 400
