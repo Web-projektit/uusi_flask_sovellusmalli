@@ -12,6 +12,10 @@ from flask_wtf.csrf import generate_csrf,CSRFError
 from urllib.parse import urlencode
 from itsdangerous import URLSafeTimedSerializer as Serializer
 
+def getUser():
+
+    return current_user
+
 def createResponse(message):
     # CORS:n vaatimat Headerit
     default_origin = 'http://localhost:3000'
@@ -65,19 +69,34 @@ def unconfirmed():
 
 @restapi.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data.lower()).first()
-        # user = None
-        if user is not None and user.verify_password(form.password.data):
-            login_user(user, form.remember_me.data)
-            next = request.args.get('next')
-            if next is None or not next.startswith('/'):
-                next = url_for('main.index')
-            return redirect(next)
-        flash('Invalid email or password.')
-        # print(f"Sähköpostiosoite:{user.email},salasana:{form.password.data}")
-    return render_template('auth/login.html', form=form)
+    data = request.get_json()
+    if data is not None:
+        form = LoginForm(data=data)
+        if form.validate_on_submit():
+            user = User.query.filter_by(email=form.email.data.lower()).first()
+            # user = None
+            if user is not None and user.verify_password(form.password.data):
+                # login_user(user, form.remember_me.data)
+                next = request.args.get('next')
+                sys.stderr.write(f"\nviews.py,SIGNIN:OK, next:{next}, confirmed:{user.confirmed}\n")
+                if next is None or not next.startswith('/'):
+                    if user.confirmed:
+                        return jsonify({'ok':'OK','confirmed':'1'})
+                    else:
+                        return jsonify({'ok':'OK'})
+                return redirect(next)
+            else:
+                # Tässä kirjoitetaan virhelokiin epäonnistunut kysely
+                query = str(User.query.filter_by(email=form.email.data.lower()).first())
+                sys.stderr.write(f"\nviews.py,SIGNIN, query:{query}\n")
+                response = jsonify({'virhe':'Väärät tunnukset'})
+                # response.status_code = 200
+                return response 
+        else:
+            print("validointivirheet:"+str(form.errors))
+            response = jsonify(form.errors)
+            return response
+    return jsonify({'message': 'No data provided'}), 400
 
 
 @restapi.route('/logout')
@@ -167,13 +186,16 @@ def confirm(token):
 
 
 @restapi.route('/confirm')
-@login_required
+# @login_required
 def resend_confirmation():
-    token = current_user.generate_confirmation_token()
-    send_email(current_user.email, 'Confirm Your Account',
-               'auth/email/confirm', user=current_user, token=token)
-    flash('A new confirmation email has been sent to you by email.')
-    return redirect(url_for('main.index'))
+    # token = current_user.generate_confirmation_token()
+    # send_email(current_user.email, 'Confirm Your Account',
+    #           'auth/email/confirm', user=current_user, token=token)
+    # flash('A new confirmation email has been sent to you by email.')
+    # return redirect(url_for('main.index'))
+    message = 'A new confirmation email has been sent to you by email.'
+    message += ' Huom. Tämä ei vielä toimi.'
+    return jsonify({'ok':"OK",'message':message})
 
 
 @restapi.route('/change-password', methods=['GET', 'POST'])
