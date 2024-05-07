@@ -1,5 +1,5 @@
 import sys
-from flask import render_template, redirect, current_app, request, jsonify, url_for, flash, make_response
+from flask import render_template, redirect, current_app, request, g, jsonify, url_for, flash, make_response
 from flask_login import login_user, logout_user, login_required, \
     current_user
 from . import restapi
@@ -8,12 +8,12 @@ from ..models import User
 from ..email import send_email
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm,\
     PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm
+from .authentication import auth
 from flask_wtf.csrf import generate_csrf,CSRFError
 from urllib.parse import urlencode
 from itsdangerous import URLSafeTimedSerializer as Serializer
 
 def getUser():
-
     return current_user
 
 def createResponse(message):
@@ -59,13 +59,14 @@ def get_csrf():
     response.headers.set("X-CSRFToken", token)
     return response
 
-
 @restapi.route('/unconfirmed')
 def unconfirmed():
+    app = current_app._get_current_object()
+    app.logger.debug('reactapi.unconfirmed,endnode: %s',request.endpoint)
     if current_user.is_anonymous or current_user.confirmed:
-        return redirect(url_for('main.index'))
-    return render_template('auth/unconfirmed.html')
-
+        app.logger.debug('reactapi.unconfirmed,redirect: %s',current_user.is_anonymous)
+        return redirect(app.config['REACT_ORIGIN'])
+    return redirect(app.config['REACT_UNCONFIRMED'])
 
 @restapi.route('/login', methods=['GET', 'POST'])
 def login():
@@ -80,10 +81,11 @@ def login():
                 next = request.args.get('next')
                 sys.stderr.write(f"\nviews.py,SIGNIN:OK, next:{next}, confirmed:{user.confirmed}\n")
                 if next is None or not next.startswith('/'):
+                    token = user.generate_auth_token()
                     if user.confirmed:
-                        return jsonify({'ok':'OK','confirmed':'1'})
+                        return jsonify({'ok':token,'confirmed':'1'})
                     else:
-                        return jsonify({'ok':'OK'})
+                        return jsonify({'ok':token})
                 return redirect(next)
             else:
                 # Tässä kirjoitetaan virhelokiin epäonnistunut kysely
@@ -98,14 +100,9 @@ def login():
             return response
     return jsonify({'message': 'No data provided'}), 400
 
-
 @restapi.route('/logout')
-# @login_required
+@auth.login_required
 def logout():
-    # logout_user()
-    # flash('You have been logged out.')
-    # return redirect(url_for('main.index'))
-    # Huom. tämä on väliaikainen testaamaton ratkaisu.
     return jsonify({'message': 'You have been logged out.'})
 
 @restapi.route('/register', methods=['POST'])
@@ -136,6 +133,7 @@ def register():
 # Huom. login_required vie login-sivulle, ja kirjautuminen takaisin tänne
 def confirm(token):
     app = current_app._get_current_object()
+    referer = request.headers.get('Referer')
     # app.logger.debug('/confirm,confirmed: %s',current_user.confirmed)
     app.logger.debug('/confirm,headers:' + str(request.headers))
     s = Serializer(app.config['SECRET_KEY'])
@@ -143,12 +141,10 @@ def confirm(token):
         data = s.loads(token)
     except:
         return jsonify({'message': 'Invalid token'}), 400
-
     current_user = User.query.get(data.get('confirm'))
     if current_user is None:
         return jsonify({'message': 'User not found'}), 404
-
-    if current_user.confirmed:
+    elif current_user.confirmed:
         # Huom. Tähän vain sähköpostilinkistä kirjautuneena.
         # Siirtyminen uuteen ikkunaan ei-kirjautuneena
         # Huom. Nyt sama ilmoitus kuin ensi kertaa vahvistuksessa.
@@ -156,15 +152,15 @@ def confirm(token):
         return redirect(app.config['REACT_CONFIRMED'] + '?jo=jo')
         # message = "Sähköpostiosoite on jo vahvistettu."
         # return jsonify({'ok':"Virhe",'message':message})
-    if current_user.confirm(token):
+    elif current_user.confirm(token):
         app.logger.debug('/confirm,confirmed here')
         db.session.commit()
         message = "Sähköpostiosoite on vahvistettu."
         # redirect_url = f"{app.config['REACT_ORIGIN']}?message={message}"
         # return redirect(redirect_url)
-        if request.headers.get('Referer'):
+        if referer is not None:
             # Kirjautumisen kautta
-            return jsonify({'ok':"OK",'message':message, 'confirmed':'1'})
+            return jsonify({'ok':"OK",'message':message, 'confirmed':'1', 'referer':referer})
         else:
             # Sähköpostilinkin kautta suoraan
             app.logger.debug('\n/confirm,REACT_CONFIRMED:' + app.config['REACT_CONFIRMED']+'\n')
@@ -178,28 +174,27 @@ def confirm(token):
         # return jsonify({'ok':"Virhe",'message':message})
         query_params = { 'message':message }
         encoded_params = urlencode(query_params)
-        if request.headers.get('Referer'):
+        if referer is not None:
             # Kirjautumisen kautta
-            return jsonify({'ok':"Virhe",'message':message})
+            return jsonify({'ok':"Virhe",'message':message, 'referer':referer})
         return redirect(app.config['REACT_UNCONFIRMED'] + "?" + encoded_params) 
     # return redirect(app.config['REACT_ORIGIN'])
 
-
 @restapi.route('/confirm')
-# @login_required
+@auth.login_required
 def resend_confirmation():
-    # token = current_user.generate_confirmation_token()
-    # send_email(current_user.email, 'Confirm Your Account',
-    #           'auth/email/confirm', user=current_user, token=token)
+    token = g.current_user.generate_confirmation_token()
+    send_email(g.current_user.email, 'Confirm Your Account',
+              'auth/email/confirm', user=g.current_user, token=token)
     # flash('A new confirmation email has been sent to you by email.')
     # return redirect(url_for('main.index'))
     message = 'A new confirmation email has been sent to you by email.'
-    message += ' Huom. Tämä ei vielä toimi.'
+    message += ' Huom. Tätä ei vielä ole testattu.'
     return jsonify({'ok':"OK",'message':message})
 
 
 @restapi.route('/change-password', methods=['GET', 'POST'])
-@login_required
+@auth.login_required
 def change_password():
     form = ChangePasswordForm()
     if form.validate_on_submit():
