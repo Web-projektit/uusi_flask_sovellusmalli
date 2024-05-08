@@ -129,7 +129,7 @@ def register():
 @restapi.route('/confirm/<token>')
 # CORS määritetään alustuksessa tai tässä
 # @cross_origin(supports_credentials=True)
-# @login_required
+@auth.login_required
 # Huom. login_required vie login-sivulle, ja kirjautuminen takaisin tänne
 def confirm(token):
     app = current_app._get_current_object()
@@ -181,6 +181,7 @@ def confirm(token):
     # return redirect(app.config['REACT_ORIGIN'])
 
 @restapi.route('/confirm')
+# Huom. testattava, miten before_request sallii pääsyn tänne
 @auth.login_required
 def resend_confirmation():
     token = g.current_user.generate_confirmation_token()
