@@ -79,13 +79,15 @@ def login():
             if user is not None and user.verify_password(form.password.data):
                 # login_user(user, form.remember_me.data)
                 next = request.args.get('next')
-                sys.stderr.write(f"\nviews.py,SIGNIN:OK, next:{next}, confirmed:{user.confirmed}\n")
+                sys.stderr.write(f"\nrestapi,views.py,SIGNIN:OK, next:{next}, confirmed:{user.confirmed}\n")
                 if next is None or not next.startswith('/'):
                     token = user.generate_auth_token()
                     if user.confirmed:
-                        return jsonify({'ok':token,'confirmed':'1'})
+                        response = jsonify({'ok': True, 'confirmed': '1'})
                     else:
-                        return jsonify({'ok':token})
+                        response = jsonify({'ok': True})
+                    response.headers['Authorization'] = 'Bearer ' + token
+                    return response
                 return redirect(next)
             else:
                 # Tässä kirjoitetaan virhelokiin epäonnistunut kysely
@@ -127,9 +129,10 @@ def register():
 
 
 @restapi.route('/confirm/<token>')
+# http://localhost:5000/restapi/confirm/eyJjb25maXJtIjozNX0.ZjTmeA.Z8LgLyLnBs0leoLTyGv2P1y1xGo
 # CORS määritetään alustuksessa tai tässä
 # @cross_origin(supports_credentials=True)
-@auth.login_required
+# @auth.login_required
 # Huom. login_required vie login-sivulle, ja kirjautuminen takaisin tänne
 def confirm(token):
     app = current_app._get_current_object()
@@ -140,10 +143,20 @@ def confirm(token):
     try:
         data = s.loads(token)
     except:
-        return jsonify({'message': 'Invalid token'}), 400
+        message = 'Vahvistuslinkki on virheellinen tai se ei ole enää voimassa.'
+        if referer is not None:
+            return jsonify({'ok':"Virhe",'message':message, 'referer':referer})
+        else:
+            encoded_params = urlencode({ 'message':message })
+            return redirect(app.config['REACT_UNCONFIRMED'] + "?" + encoded_params) 
     current_user = User.query.get(data.get('confirm'))
     if current_user is None:
-        return jsonify({'message': 'User not found'}), 404
+        message = 'Käyttäjää ei löydy.'
+        if referer is not None:
+            return jsonify({'ok':'virhe','message': message}), 404
+        else:
+            encoded_params = urlencode({ 'message':message })
+            return redirect(app.config['REACT_UNCONFIRMED'] + "?" + encoded_params) 
     elif current_user.confirmed:
         # Huom. Tähän vain sähköpostilinkistä kirjautuneena.
         # Siirtyminen uuteen ikkunaan ei-kirjautuneena
@@ -172,12 +185,12 @@ def confirm(token):
         # redirect_url = f"{app.config['REACT_UNCONFIRMED']}?message={message}"
         # return redirect(redirect_url)
         # return jsonify({'ok':"Virhe",'message':message})
-        query_params = { 'message':message }
-        encoded_params = urlencode(query_params)
         if referer is not None:
             # Kirjautumisen kautta
             return jsonify({'ok':"Virhe",'message':message, 'referer':referer})
-        return redirect(app.config['REACT_UNCONFIRMED'] + "?" + encoded_params) 
+        else:
+            encoded_params = urlencode({ 'message':message })
+            return redirect(app.config['REACT_UNCONFIRMED'] + "?" + encoded_params) 
     # return redirect(app.config['REACT_ORIGIN'])
 
 @restapi.route('/confirm')
@@ -186,7 +199,7 @@ def confirm(token):
 def resend_confirmation():
     token = g.current_user.generate_confirmation_token()
     send_email(g.current_user.email, 'Confirm Your Account',
-              'auth/email/confirm', user=g.current_user, token=token)
+              'restapi/email/confirm', user=g.current_user, token=token)
     # flash('A new confirmation email has been sent to you by email.')
     # return redirect(url_for('main.index'))
     message = 'A new confirmation email has been sent to you by email.'

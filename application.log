@@ -181,3 +181,28 @@ INFO:werkzeug:127.0.0.1 - - [16/Apr/2024 09:49:07] "[32mPOST /auth/register HTT
 INFO:werkzeug:127.0.0.1 - - [03/May/2024 16:28:24] "[35m[1mPOST /restapi/register HTTP/1.1[0m" 201 -
 INFO:root:Sähköposti lähetetty
 INFO:werkzeug: * Detected change in 'C:\\Projektit\\projektit_flask\\sovellusmalli\\app\\restapi\\views.py', reloading
+INFO:werkzeug:127.0.0.1 - - [09/May/2024 10:55:04] "GET /restapi/confirm HTTP/1.1" 200 -
+INFO:root:Sähköposti lähetetty
+INFO:werkzeug: * Detected change in 'C:\\Projektit\\projektit_flask\\sovellusmalli\\app\\restapi\\views.py', reloading
+INFO:werkzeug:127.0.0.1 - - [09/May/2024 11:46:57] "GET /restapi/confirm HTTP/1.1" 200 -
+INFO:root:Sähköposti lähetetty
+DEBUG:app:/confirm,headers:Host: localhost:5000
+Connection: keep-alive
+Sec-Ch-Ua: "Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"
+Sec-Ch-Ua-Mobile: ?0
+Sec-Ch-Ua-Platform: "Windows"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br, zstd
+Accept-Language: fi-FI,fi;q=0.9,en-US;q=0.8,en;q=0.7,ru;q=0.6
+Cookie: session=eyJfZnJlc2giOmZhbHNlLCJjc3JmX3Rva2VuIjoiOTI2Mzc5NGRmNmI0N2YwMTA2ZTFmZmNmMmM3ZjYwYTU2NjY0ZDUwNyJ9.ZjSPvA.zEKlA3lyo7emrnYGh2FJuNGNt-g
+
+
+INFO:werkzeug:127.0.0.1 - - [09/May/2024 12:33:50] "[31m[1mGET /restapi/confirm/eyJjb25maXJtIjozNX0.ZjyNgQ.36b2XNgf0VdMDRpfsc1GwF9yip HTTP/1.1[0m" 400 -
+INFO:werkzeug:127.0.0.1 - - [09/May/2024 12:33:50] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+INFO:werkzeug: * Detected change in 'C:\\Projektit\\projektit_flask\\sovellusmalli\\app\\restapi\\views.py', reloading

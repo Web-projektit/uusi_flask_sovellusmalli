@@ -21,7 +21,8 @@ csrf = CSRFProtect()
 
 def create_app(config_name):
     app = Flask(__name__)
-    CORS(app,supports_credentials=True,expose_headers=["Content-Type","X-CSRFToken"])
+    CORS(app, supports_credentials=True, expose_headers=["Content-Type", "X-CSRFToken", "Authorization"])
+   
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
