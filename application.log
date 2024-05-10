@@ -1,0 +1,71 @@
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:21:06] "OPTIONS /restapi/logout HTTP/1.1" 200 -
+DEBUG:app:auth_error, request.endpoint:restapi.logout,request.referrer:http://localhost:5173/,authorization_header:bearer "eyJpZCI6MzV9.Zjyq2w.O03XzUcBsVJEfXI8SOR1IAbMgVo"
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:21:06] "[31m[1mGET /restapi/logout HTTP/1.1[0m" 401 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:28:06] "GET /restapi/getcsrf HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:28:16] "OPTIONS /restapi/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:28:17] "POST /restapi/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:28:23] "OPTIONS /restapi/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:28:24] "POST /restapi/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:30:16] "OPTIONS /restapi/logout HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:30:16] "GET /restapi/logout HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:30:18] "GET /restapi/getcsrf HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:30:28] "OPTIONS /restapi/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:30:28] "POST /restapi/login HTTP/1.1" 200 -
+DEBUG:app:/confirm,headers:Host: localhost:5000
+Connection: keep-alive
+Sec-Ch-Ua: "Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"
+Sec-Ch-Ua-Mobile: ?0
+Sec-Ch-Ua-Platform: "Windows"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: cross-site
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br, zstd
+Accept-Language: fi-FI,fi;q=0.9,en-US;q=0.8,en;q=0.7,ru;q=0.6
+Cookie: session=eyJfZnJlc2giOmZhbHNlLCJjc3JmX3Rva2VuIjoiOTI2Mzc5NGRmNmI0N2YwMTA2ZTFmZmNmMmM3ZjYwYTU2NjY0ZDUwNyJ9.ZjSPvA.zEKlA3lyo7emrnYGh2FJuNGNt-g
+
+
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:31:00] "[32mGET /restapi/confirm/eyJjb25maXJtIjozNX0.Zjyi8g.M6WhXz-iUf7ziA9L1YIxEzZNRpc HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:31:02] "GET /restapi/getcsrf HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:36:33] "OPTIONS /restapi/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:36:34] "POST /restapi/login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:36:53] "OPTIONS /restapi/confirm HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:36:53] "GET /restapi/confirm HTTP/1.1" 200 -
+INFO:root:Sähköposti lähetetty
+DEBUG:app:/confirm,headers:Host: localhost:5000
+Connection: keep-alive
+Sec-Ch-Ua: "Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"
+Sec-Ch-Ua-Mobile: ?0
+Sec-Ch-Ua-Platform: "Windows"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: cross-site
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br, zstd
+Accept-Language: fi-FI,fi;q=0.9,en-US;q=0.8,en;q=0.7,ru;q=0.6
+Cookie: session=eyJfZnJlc2giOmZhbHNlLCJjc3JmX3Rva2VuIjoiOTI2Mzc5NGRmNmI0N2YwMTA2ZTFmZmNmMmM3ZjYwYTU2NjY0ZDUwNyJ9.ZjSPvA.zEKlA3lyo7emrnYGh2FJuNGNt-g
+
+
+DEBUG:app:/confirm,confirmed here
+DEBUG:app:
+/confirm,REACT_CONFIRMED:http://localhost:5173/confirmed
+
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 09:37:09] "[32mGET /restapi/confirm/eyJjb25maXJtIjozNX0.Zj3AhQ.piYXrSMN3xTEsHyL8f_bFEOw4r0 HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 13:11:23] "GET /restapi/getcsrf HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 13:14:32] "GET /restapi/getcsrf HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 13:14:41] "GET /restapi/getcsrf HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 13:16:31] "GET /restapi/getcsrf HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 13:16:51] "GET /restapi/getcsrf HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 14:33:24] "POST /restapi/reset HTTP/1.1" 200 -
+INFO:root:Sähköposti lähetetty
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 14:39:17] "GET /restapi/getcsrf HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 14:39:20] "GET /restapi/getcsrf HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 14:40:02] "OPTIONS /restapi/reset HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [10/May/2024 14:40:02] "POST /restapi/reset HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'C:\\Projektit\\projektit_flask\\sovellusmalli\\app\\restapi\\views.py', reloading

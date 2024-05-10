@@ -200,10 +200,7 @@ def resend_confirmation():
     token = g.current_user.generate_confirmation_token()
     send_email(g.current_user.email, 'Confirm Your Account',
               'restapi/email/confirm', user=g.current_user, token=token)
-    # flash('A new confirmation email has been sent to you by email.')
-    # return redirect(url_for('main.index'))
     message = 'A new confirmation email has been sent to you by email.'
-    message += ' Huom. Tätä ei vielä ole testattu.'
     return jsonify({'ok':"OK",'message':message})
 
 
@@ -225,26 +222,23 @@ def change_password():
 
 @restapi.route('/reset', methods=['GET', 'POST'])
 def password_reset_request():
-    if not current_user.is_anonymous:
-        return redirect(url_for('main.index'))
-    form = PasswordResetRequestForm()
+    data = request.get_json()
+    form = PasswordResetRequestForm(data=data)
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower()).first()
         if user:
             token = user.generate_reset_token()
             send_email(user.email, 'Reset Your Password',
-                       'auth/email/reset_password',
+                       'restapi/email/reset_password',
                        user=user, token=token)
-        flash('An email with instructions to reset your password has been '
-              'sent to you.')
-        return redirect(url_for('auth.login'))
-    return render_template('auth/reset_password.html', form=form)
+            message = 'An email with instructions to reset your password has been sent to you.'
+            return jsonify({'ok':True,'message':message})
+        return jsonify({'virhe': 'Käyttäjää ei löytynyt'})
+    return jsonify({'virhe': 'Invalid data', 'errors': form.errors})
 
 
 @restapi.route('/reset/<token>', methods=['GET', 'POST'])
 def password_reset(token):
-    if not current_user.is_anonymous:
-        return redirect(url_for('main.index'))
     form = PasswordResetForm()
     if form.validate_on_submit():
         if User.reset_password(token, form.password.data):
