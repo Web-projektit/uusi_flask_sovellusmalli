@@ -69,3 +69,5 @@ INFO:werkzeug:127.0.0.1 - - [10/May/2024 14:39:20] "GET /restapi/getcsrf HTTP/1.
 INFO:werkzeug:127.0.0.1 - - [10/May/2024 14:40:02] "OPTIONS /restapi/reset HTTP/1.1" 200 -
 INFO:werkzeug:127.0.0.1 - - [10/May/2024 14:40:02] "POST /restapi/reset HTTP/1.1" 200 -
 INFO:werkzeug: * Detected change in 'C:\\Projektit\\projektit_flask\\sovellusmalli\\app\\restapi\\views.py', reloading
+INFO:werkzeug:127.0.0.1 - - [13/May/2024 14:50:18] "POST /restapi/reset HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'C:\\Projektit\\projektit_flask\\sovellusmalli\\app\\models.py', reloading

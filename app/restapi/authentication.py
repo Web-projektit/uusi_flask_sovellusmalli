@@ -40,6 +40,7 @@ def auth_error():
 def before_request():
     # Huom. pääsyä vahvistamiseen ei saa estää.
     print("before_request, request.endpoint:",request.endpoint,"request.referrer:",request.referrer)
+    print("before_request, utm_source:",request.args.get('utm_source'))
     if hasattr(g, 'current_user') and \
         not g.current_user.is_anonymous and \
         not g.current_user.confirmed:

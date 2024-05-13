@@ -141,11 +141,12 @@ class User(UserMixin, db.Model):
     def reset_password(token, new_password):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
-            data = s.loads(token,max_age=3600)
+            data = s.loads(token,max_age=3600*24*5)
         except:
             return False
         user = User.query.get(data.get('reset'))
         if user is None:
+            print(f"data: {data}, käyttäjää ei löydy.")
             return False
         user.password = new_password
         db.session.add(user)

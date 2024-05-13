@@ -30,10 +30,10 @@ def createResponse(message):
 
 @restapi.app_errorhandler(CSRFError)
 def handle_csrf_error(e):
-    message = {'virhe':f'csrf-token puuttuu ({e.description}), headers:{str(request.headers)}'}
+    response = {'virhe':f'csrf-token puuttuu ({e.description}), headers:{str(request.headers)}'}
     # print(f"\nPRINT:reactapi CSFRError,SIGNIN headers:{str(request.headers)}\n")
     sys.stderr.write(f"\nreactapi CSFRError,headers:{str(request.headers)}\n")
-    return createResponse(message)
+    return createResponse(response)
 
 
 '''
@@ -230,7 +230,7 @@ def password_reset_request():
             token = user.generate_reset_token()
             send_email(user.email, 'Reset Your Password',
                        'restapi/email/reset_password',
-                       user=user, token=token)
+                       user=user, token=token, utm_source='email')
             message = 'An email with instructions to reset your password has been sent to you.'
             return jsonify({'ok':True,'message':message})
         return jsonify({'virhe': 'Käyttäjää ei löytynyt'})
@@ -239,16 +239,45 @@ def password_reset_request():
 
 @restapi.route('/reset/<token>', methods=['GET', 'POST'])
 def password_reset(token):
-    form = PasswordResetForm()
+    app = current_app._get_current_object()
+    referer = request.args.get('utm_source')
+    app.logger.debug('/password_reset,headers:' + str(request.headers))
+    s = Serializer(app.config['SECRET_KEY'])
+    try:
+        data = s.loads(token)
+    except:
+        message = 'Salasanan uusimislinkki on virheellinen tai se ei ole enää voimassa.'
+        if referer is not 'email':
+            return jsonify({'ok':"Virhe",'message':message, 'referer':referer})
+        else:
+            encoded_params = urlencode({ 'message':message })
+            return redirect(app.config['REACT_RESET_PASSWORD'] + "?" + encoded_params) 
+    current_user = User.query.get(data.get('reset'))
+    if current_user is None:
+        message = 'Käyttäjää ei löydy.'
+        if referer is not 'email':
+            return jsonify({'ok':False,'virhe':True,'message': message}), 404
+        else:
+            encoded_params = urlencode({ 'token':token,'message':message })
+            return redirect(app.config['REACT_RESET_PASSWORD'] + "?" + encoded_params) 
+    else:
+        # Huom. Tähän vain sähköpostilinkistä kirjautuneena.
+        app.logger.debug('/reset,REACT_RESET_PASSWORD:' + app.config['REACT_RESET_PASSWORD'])
+        encoded_params = urlencode({ 'token':token })
+        return redirect(app.config['REACT_RESET_PASSWORD'] + '?' + encoded_params)
+    
+@restapi.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    data = request.get_json()
+    form = PasswordResetForm(data=data)
     if form.validate_on_submit():
         if User.reset_password(token, form.password.data):
             db.session.commit()
-            flash('Your password has been updated.')
-            return redirect(url_for('auth.login'))
+            message = 'Your password has been updated.'
+            return jsonify({'ok':True,'virhe':message,'message': message})
         else:
-            return redirect(url_for('main.index'))
-    return render_template('auth/reset_password.html', form=form)
-
+            return jsonify({'ok':False,'virhe':'Käyttäjää ei löydy tai uusimislinkki on vanhentunut.','message': 'Käyttäjää ei löydy.'})
+    return jsonify({'ok':False,'virhe':'Invalid data','message': 'Invalid data', 'errors': form.errors})
 
 @restapi.route('/change_email', methods=['GET', 'POST'])
 @login_required

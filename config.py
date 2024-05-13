@@ -35,6 +35,7 @@ class DevelopmentConfig(Config):
     REACT_LOGIN = REACT_ORIGIN + 'kirjautuminen'
     REACT_UNCONFIRMED = REACT_ORIGIN + 'unconfirmed'
     REACT_CONFIRMED = REACT_ORIGIN + 'confirmed'
+    REACT_RESET_PASSWORD = REACT_ORIGIN + 'reset_password'
     #SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
     #    'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
