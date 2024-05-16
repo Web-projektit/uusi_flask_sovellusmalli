@@ -45,6 +45,7 @@ nosetests.xml
 *.txt
 !requirements.txt
 !azure_environment_variables_malli.txt
+!templates/*.txt
 *.log
 app/profiilikuvat/*
 
