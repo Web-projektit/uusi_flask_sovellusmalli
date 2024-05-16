@@ -266,18 +266,21 @@ def password_reset(token):
         encoded_params = urlencode({ 'token':token })
         return redirect(app.config['REACT_RESET_PASSWORD'] + '?' + encoded_params)
     
+@restapi.route('/reset_password', methods=['GET', 'POST'])    
 @restapi.route('/reset_password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
+def reset_password(token=None):
+    if token is None:
+        return jsonify({'status':'virhe','message': 'Virheellinen linkki'})
     data = request.get_json()
     form = PasswordResetForm(data=data)
     if form.validate_on_submit():
         if User.reset_password(token, form.password.data):
             db.session.commit()
             message = 'Your password has been updated.'
-            return jsonify({'ok':True,'virhe':message,'message': message})
+            return jsonify({'status':'ok','message': message})
         else:
-            return jsonify({'ok':False,'virhe':'Käyttäjää ei löydy tai uusimislinkki on vanhentunut.','message': 'Käyttäjää ei löydy.'})
-    return jsonify({'ok':False,'virhe':'Invalid data','message': 'Invalid data', 'errors': form.errors})
+            return jsonify({'status':'virhe','message':'Käyttäjää ei löydy tai uusimislinkki on vanhentunut.'})
+    return jsonify({'status':'virhe','message': 'Invalid data', 'errors': form.errors})
 
 @restapi.route('/change_email', methods=['GET', 'POST'])
 @login_required
