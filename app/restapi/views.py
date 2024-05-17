@@ -30,7 +30,8 @@ def createResponse(message):
 
 @restapi.app_errorhandler(CSRFError)
 def handle_csrf_error(e):
-    response = {'virhe':f'csrf-token puuttuu ({e.description}), headers:{str(request.headers)}'}
+    message = f'csrf-token puuttuu ({e.description}), headers:{str(request.headers)}'
+    response = {'status':'virhe','message':message}
     # print(f"\nPRINT:reactapi CSFRError,SIGNIN headers:{str(request.headers)}\n")
     sys.stderr.write(f"\nreactapi CSFRError,headers:{str(request.headers)}\n")
     return createResponse(response)
@@ -53,7 +54,11 @@ def before_request():
 # @cross_origin(supports_credentials=True)
 def get_csrf():
     token = generate_csrf()
-    response = jsonify({"detail": "CSRF cookie set"})
+    '''
+    message = "CSRF-token on luotu"
+    response = jsonify({"status":"ok",'message':message})
+    '''
+    response = make_response()
     # Määritetään CORS-alustuksessa
     # response.headers.set('Access-Control-Expose-Headers','X-CSRFToken') 
     response.headers.set("X-CSRFToken", token)
@@ -80,12 +85,16 @@ def login():
                 # login_user(user, form.remember_me.data)
                 next = request.args.get('next')
                 sys.stderr.write(f"\nrestapi,views.py,SIGNIN:OK, next:{next}, confirmed:{user.confirmed}\n")
+                # Huom. next-osoite ei saa olla ulkoinen. 
+                # Tässä aiotulle sivulle siirrytään React-sovelluksessa,
+                # joten next on tyhjä.       
                 if next is None or not next.startswith('/'):
                     token = user.generate_auth_token()
+                    message = 'Kirjautuminen onnistui'
                     if user.confirmed:
-                        response = jsonify({'ok': True, 'confirmed': '1'})
+                        response = jsonify({'status':'ok','message':message,'confirmed':'1'})
                     else:
-                        response = jsonify({'ok': True})
+                        response = jsonify({'status':'ok','message':message})
                     response.headers['Authorization'] = 'Bearer ' + token
                     return response
                 return redirect(next)
@@ -93,14 +102,15 @@ def login():
                 # Tässä kirjoitetaan virhelokiin epäonnistunut kysely
                 query = str(User.query.filter_by(email=form.email.data.lower()).first())
                 sys.stderr.write(f"\nviews.py,SIGNIN, query:{query}\n")
-                response = jsonify({'virhe':'Väärät tunnukset'})
+                message = 'Väärät tunnukset'
+                response = jsonify({'status':'virhe','message':message})
                 # response.status_code = 200
                 return response 
         else:
             print("validointivirheet:"+str(form.errors))
-            response = jsonify(form.errors)
+            response = jsonify({'status':'virhe','errors':form.errors})
             return response
-    return jsonify({'message': 'No data provided'}), 400
+    return jsonify({'status':'virhe','message':'Tiedot puuttuvat'}), 400
 
 @restapi.route('/logout')
 @auth.login_required
@@ -121,11 +131,11 @@ def register():
             db.session.commit()
             token = user.generate_confirmation_token()
             send_email(user.email, 'Confirm Your Account',
-                    'restapi/email/confirm', user=user, token=token)
-            return jsonify({'message': 'OK'}), 201
+                    'restapi/email/confirm', user=user, token=token, utm_source='email')
+            return jsonify({'status':'ok','message':'Rekisteröityminen onnistui'}), 201
         else:
-            return jsonify({'message': 'Invalid data', 'errors': form.errors})
-    return jsonify({'message': 'No data provided'}), 400
+            return jsonify({'status':'virhe','message':'Virheellisiä tietoja','errors':form.errors})
+    return jsonify({'status':'virhe','message':'Tiedot puuttuvat'}), 400
 
 
 @restapi.route('/confirm/<token>')
@@ -136,16 +146,17 @@ def register():
 # Huom. login_required vie login-sivulle, ja kirjautuminen takaisin tänne
 def confirm(token):
     app = current_app._get_current_object()
-    referer = request.headers.get('Referer')
+    referer = request.args.get('utm_source')
+    # referer = request.headers.get('Referer')
     # app.logger.debug('/confirm,confirmed: %s',current_user.confirmed)
     app.logger.debug('/confirm,headers:' + str(request.headers))
     s = Serializer(app.config['SECRET_KEY'])
     try:
         data = s.loads(token)
     except:
-        message = 'Vahvistuslinkki on virheellinen tai se ei ole enää voimassa.'
+        message = 'Vahvistuslinkki on virheellinen tai se ei ole enää voimassa'
         if referer is not None:
-            return jsonify({'ok':"Virhe",'message':message, 'referer':referer})
+            return jsonify({'status':"virhe",'message':message, 'referer':referer})
         else:
             encoded_params = urlencode({ 'message':message })
             return redirect(app.config['REACT_UNCONFIRMED'] + "?" + encoded_params) 
@@ -153,7 +164,7 @@ def confirm(token):
     if current_user is None:
         message = 'Käyttäjää ei löydy.'
         if referer is not None:
-            return jsonify({'ok':'virhe','message': message}), 404
+            return jsonify({'status':'virhe','message': message}), 404
         else:
             encoded_params = urlencode({ 'message':message })
             return redirect(app.config['REACT_UNCONFIRMED'] + "?" + encoded_params) 
@@ -168,12 +179,12 @@ def confirm(token):
     elif current_user.confirm(token):
         app.logger.debug('/confirm,confirmed here')
         db.session.commit()
-        message = "Sähköpostiosoite on vahvistettu."
+        message = "Sähköpostiosoite on vahvistettu"
         # redirect_url = f"{app.config['REACT_ORIGIN']}?message={message}"
         # return redirect(redirect_url)
         if referer is not None:
             # Kirjautumisen kautta
-            return jsonify({'ok':"OK",'message':message, 'confirmed':'1', 'referer':referer})
+            return jsonify({'status':"ok",'message':message,'confirmed':'1','referer':referer})
         else:
             # Sähköpostilinkin kautta suoraan
             app.logger.debug('\n/confirm,REACT_CONFIRMED:' + app.config['REACT_CONFIRMED']+'\n')
@@ -181,13 +192,13 @@ def confirm(token):
     else:
         # Huom. Kun on jo kirjauduttu toisella välilehdellä, Referer-headeriä ei ole.
         # Suojattu reitti /unfirmed Reactissa johtaa sinne kirjautumisen kautta. 
-        message = 'Vahvistuslinkki on virheellinen tai se ei ole enää voimassa.'
+        message = 'Vahvistuslinkki on virheellinen tai se ei ole enää voimassa'
         # redirect_url = f"{app.config['REACT_UNCONFIRMED']}?message={message}"
         # return redirect(redirect_url)
         # return jsonify({'ok':"Virhe",'message':message})
         if referer is not None:
             # Kirjautumisen kautta
-            return jsonify({'ok':"Virhe",'message':message, 'referer':referer})
+            return jsonify({'status':"virhe",'message':message, 'referer':referer})
         else:
             encoded_params = urlencode({ 'message':message })
             return redirect(app.config['REACT_UNCONFIRMED'] + "?" + encoded_params) 
@@ -199,9 +210,9 @@ def confirm(token):
 def resend_confirmation():
     token = g.current_user.generate_confirmation_token()
     send_email(g.current_user.email, 'Confirm Your Account',
-              'restapi/email/confirm', user=g.current_user, token=token)
-    message = 'A new confirmation email has been sent to you by email.'
-    return jsonify({'ok':"OK",'message':message})
+              'restapi/email/confirm', user=g.current_user, token=token, utm_source='email')
+    message = 'Uusi vahvistuslinkki on lähetetty ähköpostissa.'
+    return jsonify({'status':"ok",'message':message})
 
 
 @restapi.route('/change-password', methods=['GET', 'POST'])
@@ -279,7 +290,7 @@ def reset_password(token=None):
             message = 'Your password has been updated.'
             return jsonify({'status':'ok','message': message})
         else:
-            return jsonify({'status':'virhe','message':'Käyttäjää ei löydy tai uusimislinkki on vanhentunut.'})
+            return jsonify({'status':'virhe','message':'Käyttäjää ei löydy tai uusimislinkki on vanhentunut'})
     return jsonify({'status':'virhe','message': 'Invalid data', 'errors': form.errors})
 
 @restapi.route('/change_email', methods=['GET', 'POST'])
