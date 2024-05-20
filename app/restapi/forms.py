@@ -18,7 +18,7 @@ class LoginForm(FlaskForm):
 
 
 class RegistrationForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
+    email = StringField('Email', validators=[CustomDataRequired('sähköpostiosoite'), Length(1, 64),
                                              Email()])
     username = StringField('Username', validators=[
         DataRequired(), Length(1, 64),
@@ -26,8 +26,8 @@ class RegistrationForm(FlaskForm):
                'Käytä vain kirjaimia, numeroita, pisteitä tai '
                'alaviivoja')])
     password = PasswordField('Password', validators=[
-        DataRequired(), EqualTo('password2', message='Salasanat eivät täsmää')])
-    password2 = PasswordField('Vahvista salasana', validators=[DataRequired()])
+        CustomDataRequired('salasana'), EqualTo('password2', message='Salasanat eivät täsmää')])
+    password2 = PasswordField('Vahvista salasana', validators=[CustomDataRequired('salasana uudestaan')])
     submit = SubmitField('Rekisteröidy')
 
     def validate_email(self, field):
@@ -40,31 +40,31 @@ class RegistrationForm(FlaskForm):
 
 
 class ChangePasswordForm(FlaskForm):
-    old_password = PasswordField('Old password', validators=[DataRequired()])
+    old_password = PasswordField('Old password', validators=[CustomDataRequired('vanha salasana')])
     password = PasswordField('New password', validators=[
-        DataRequired(), EqualTo('password2', message='Passwords must match.')])
+        CustomDataRequired('uusi salasana'), EqualTo('password2', message='Passwords must match.')])
     password2 = PasswordField('Vahvista salasana',
-                              validators=[DataRequired()])
+                              validators=[CustomDataRequired('uusi salasana uudestaan')])
     submit = SubmitField('Vaihda salasana')
 
 
 class PasswordResetRequestForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
+    email = StringField('Email', validators=[CustomDataRequired('sähköpostiosoite'), Length(1, 64),
                                              Email()])
     submit = SubmitField('Lähetä salasanan uusimislinkki')
 
 
 class PasswordResetForm(FlaskForm):
     password = PasswordField('New Password', validators=[
-        DataRequired(), EqualTo('password2', message='Passwords must match')])
-    password2 = PasswordField('Vahvista salasana', validators=[DataRequired()])
+        CustomDataRequired('uusi salasana'), EqualTo('password2', message='Salasanat eivät täsmää')])
+    password2 = PasswordField('Vahvista salasana', validators=[CustomDataRequired('uusi salasana uudestaan')])
     submit = SubmitField('Uusi salasana')
 
 
 class ChangeEmailForm(FlaskForm):
-    email = StringField('New Email', validators=[DataRequired(), Length(1, 64),
+    email = StringField('New Email', validators=[CustomDataRequired('uusi sähköpostiosoite'), Length(1, 64),
                                                  Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[CustomDataRequired('salasana')])
     submit = SubmitField('Vaihda sähköposti')
 
     def validate_email(self, field):

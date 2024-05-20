@@ -1,10 +1,8 @@
 Dear {{ user.username }},
 
-To reset your password click on the following link:
+To confirm your new email address click on the following link:
 
 {{ linkki }}
-
-If you have not requested a password reset simply ignore this message.
 
 Sincerely,
 

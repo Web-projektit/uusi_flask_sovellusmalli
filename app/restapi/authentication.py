@@ -12,8 +12,12 @@ auth = HTTPTokenAuth(scheme='Bearer')
 @auth.verify_token
 def verify_token(token):
     if token == '':
+        print("verify_token: token on tyhjä")
         return False
     g.current_user = User.verify_auth_token(token,expiration)
+    if request.endpoint == 'restapi.logout':
+        app = current_app._get_current_object()
+        app.logger.debug(f"verify token success, headers:{request.headers}")
     return g.current_user is not None
     
 
@@ -22,6 +26,8 @@ def auth_error():
     app = current_app._get_current_object()
     # Huom. Tarve saattaa olla uudelleen ohjaus kirjautumissivulle.
     authorization_header = request.headers.get('Authorization')
+    if request.endpoint == 'restapi.logout':
+        app.logger.debug(f"auth_error, headers:{request.headers}")
     app.logger.debug(f"auth_error, request.endpoint:{request.endpoint},request.referrer:{request.referrer},authorization_header:{authorization_header}")
        # return unauthorized('Invalid credentials')
     if request.referrer is None:

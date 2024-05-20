@@ -14,7 +14,8 @@ from urllib.parse import urlencode
 from itsdangerous import URLSafeTimedSerializer as Serializer
 
 def getUser():
-    return current_user
+    # Funktiolla voidaan hakea user suojatulla reitillä
+    return g.current_user
 
 def createResponse(message):
     # CORS:n vaatimat Headerit
@@ -130,8 +131,11 @@ def register():
             db.session.add(user)
             db.session.commit()
             token = user.generate_confirmation_token()
-            send_email(user.email, 'Confirm Your Account',
-                    'restapi/email/confirm', user=user, token=token, utm_source='email')
+            linkki = url_for('restapi.confirm', token=token, utm_source='email', _external=True)
+            send_email(user.email, \
+                'Confirm Your Account', \
+                'restapi/email/confirm', \
+                linkki=linkki,user=user)
             return jsonify({'status':'ok','message':'Rekisteröityminen onnistui'}), 201
         else:
             return jsonify({'status':'virhe','message':'Virheellisiä tietoja','errors':form.errors})
@@ -208,10 +212,14 @@ def confirm(token):
 # Huom. testattava, miten before_request sallii pääsyn tänne
 @auth.login_required
 def resend_confirmation():
-    token = g.current_user.generate_confirmation_token()
-    send_email(g.current_user.email, 'Confirm Your Account',
-              'restapi/email/confirm', user=g.current_user, token=token, utm_source='email')
-    message = 'Uusi vahvistuslinkki on lähetetty ähköpostissa.'
+    user = getUser()
+    token = user.generate_confirmation_token()
+    linkki = url_for('restapi.confirm', token=token, utm_source='email', _external=True)
+    send_email(user.email, \
+        'Confirm Your Account', \
+        'restapi/email/confirm', \
+        linkki=linkki,user=user)
+    message = 'Uusi vahvistuslinkki on lähetetty sähköpostissa.'
     return jsonify({'status':"ok",'message':message})
 
 
@@ -239,9 +247,11 @@ def password_reset_request():
         user = User.query.filter_by(email=form.email.data.lower()).first()
         if user:
             token = user.generate_reset_token()
-            send_email(user.email, 'Reset Your Password',
-                       'restapi/email/reset_password',
-                       user=user, token=token, utm_source='email')
+            linkki = url_for(request.endpoint, token=token, utm_source='email', _external=True)
+            send_email(user.email, \
+                'Reset Your Password', \
+                'restapi/email/reset_password', \
+                linkki=linkki,user=user)
             message = 'An email with instructions to reset your password has been sent to you.'
             return jsonify({'ok':True,'message':message})
         return jsonify({'virhe': 'Käyttäjää ei löytynyt'})
@@ -258,7 +268,7 @@ def password_reset(token):
         data = s.loads(token)
     except:
         message = 'Salasanan uusimislinkki on virheellinen tai se ei ole enää voimassa.'
-        if referer is not 'email':
+        if referer != 'email':
             return jsonify({'ok':"Virhe",'message':message, 'referer':referer})
         else:
             encoded_params = urlencode({ 'message':message })
@@ -266,7 +276,7 @@ def password_reset(token):
     current_user = User.query.get(data.get('reset'))
     if current_user is None:
         message = 'Käyttäjää ei löydy.'
-        if referer is not 'email':
+        if referer != 'email':
             return jsonify({'ok':False,'virhe':True,'message': message}), 404
         else:
             encoded_params = urlencode({ 'token':token,'message':message })
@@ -291,27 +301,34 @@ def reset_password(token=None):
             return jsonify({'status':'ok','message': message})
         else:
             return jsonify({'status':'virhe','message':'Käyttäjää ei löydy tai uusimislinkki on vanhentunut'})
-    return jsonify({'status':'virhe','message': 'Invalid data', 'errors': form.errors})
+    return jsonify({'status':'virhe','message': 'Virheelliset tiedot', 'errors': form.errors})
 
-@restapi.route('/change_email', methods=['GET', 'POST'])
-@login_required
+
+@restapi.route('/change_email', methods=['POST'])
+@auth.login_required
 def change_email_request():
-    form = ChangeEmailForm()
+    user = getUser()
+    data = request.get_json()
+    form = ChangeEmailForm(data=data)
     if form.validate_on_submit():
-        if current_user.verify_password(form.password.data):
+        if user.verify_password(form.password.data):
             new_email = form.email.data.lower()
-            token = current_user.generate_email_change_token(new_email)
-            send_email(new_email, 'Confirm your email address',
-                       'auth/email/change_email',
-                       user=current_user, token=token)
-            flash('An email with instructions to confirm your new email '
-                  'address has been sent to you.')
-            return redirect(url_for('main.index'))
+            token = user.generate_email_change_token(new_email)
+            # Huom. tässä on vältetty linkin koodaaminen uudestaan tässä ja templatissä.
+            # request.endpoint on tässä 'restapi.change_email_request'
+            linkki = url_for(request.endpoint, token=token, utm_source='email', _external=True)
+            send_email(new_email, \
+                'Confirm your email address', \
+                'restapi/email/change_email', \
+                linkki=linkki,user=user)
+            message = "Uuteen sähköpostiosoitteeseesi on lähetetty viesti, jonka \
+                       linkistä voit vahvistaa sen."       
+            return jsonify({'status':'ok','message': message})
         else:
-            flash('Invalid email or password.')
-    return render_template("auth/change_email.html", form=form)
+            return jsonify({'status':'virhe','message':'Väärä sähköposti'})
+    return jsonify({'status':'virhe','message': 'Virheelliset tiedot', 'errors': form.errors})
 
-
+'''
 @restapi.route('/change_email/<token>')
 @login_required
 def change_email(token):
@@ -321,3 +338,4 @@ def change_email(token):
     else:
         flash('Invalid request.')
     return redirect(url_for('main.index'))
+    '''

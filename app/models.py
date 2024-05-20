@@ -128,9 +128,11 @@ class User(UserMixin, db.Model):
     def verify_auth_token(token,expiration=3600):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
-            data = s.loads(token,max_age=expiration)
-        except:
+            data = s.loads(token.encode('utf-8'),max_age=expiration)
+        except Exception as e:
+            print(f"verify_auth_token: {e}")
             return None
+        print(f"verify_auth_token, data: {data}")
         return User.query.get(data['id'])
 
     def generate_reset_token(self):
@@ -160,7 +162,7 @@ class User(UserMixin, db.Model):
     def change_email(self, token):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
-            data = s.loads(token.encode('utf-8'),max_age=3600)
+            data = s.loads(token,max_age=3600)
         except:
             return False
         if data.get('change_email') != self.id:
