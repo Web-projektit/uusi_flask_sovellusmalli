@@ -13,17 +13,20 @@ from flask_wtf.csrf import generate_csrf,CSRFError
 from urllib.parse import urlencode
 from itsdangerous import URLSafeTimedSerializer as Serializer
 
-def getUser(token=None):
+def getUser(token_id=None):
     # Funktiolla voidaan hakea user suojatulla reitillä
-    referer = request.args.get('utm_source')
-    if token is not None:
+    if token_id is not None:
         app = current_app._get_current_object()
         s = Serializer(app.config['SECRET_KEY'])
         try:
+            token = token_id.get('token')
+            id_kentta = token_id.get('id_kentta')
             data = s.loads(token)
-            token_user = User.query.get(data.get('reset'))
+            print(f"\ngetUser,data:{data}\n")
+            token_user = User.query.get(data.get(id_kentta))
             return token_user
-        except:
+        except Exception as e:
+            print(f"\ngetUser,Exception:{e}\n")
             return None
     return g.current_user
 
@@ -258,7 +261,7 @@ def password_reset_request():
         user = User.query.filter_by(email=form.email.data.lower()).first()
         if user:
             token = user.generate_reset_token()
-            linkki = url_for(request.endpoint, token=token, utm_source='email', _external=True)
+            linkki = url_for('restapi.password_reset', token=token, utm_source='email', _external=True)
             send_email(user.email, \
                 'Reset Your Password', \
                 'restapi/email/reset_password', \
@@ -326,12 +329,17 @@ def change_email_request():
             new_email = form.email.data.lower()
             token = user.generate_email_change_token(new_email)
             # Huom. tässä on vältetty linkin koodaaminen uudestaan tässä ja templatissä.
-            # request.endpoint on tässä 'restapi.change_email_request'
-            linkki = url_for(request.endpoint, token=token, utm_source='email', _external=True)
+            # Huom. request.endpoint olisi tässä 'restapi.change_email_request',
+            # jolloin - koska token-parametria ei ole määritetty sen
+            # URL-osoitteeseen - token tulee URL-parametriksi eikä URL:n osaksi,
+            # toisin kuin change_mail-funktion tapauksessa.
+            linkki = url_for('restapi.change_email', token=token, utm_source='email', _external=True)
+            print(f"linkki:{linkki}")
             send_email(new_email, \
                 'Confirm your email address', \
                 'restapi/email/change_email', \
-                linkki=linkki,user=user)
+                user=user,linkki=linkki)
+                # user=user, token=token, utm_source='email' )
             message = "Uuteen sähköpostiosoitteeseesi on lähetetty viesti, jonka \
                        linkistä voit vahvistaa sen."       
             return jsonify({'status':'ok','message': message})
@@ -344,14 +352,19 @@ def change_email_request():
 #@auth.login_required
 def change_email(token):
     app = current_app._get_current_object()
-    user = getUser(token)
+    user = getUser({ 'token':token,'id_kentta':'change_email'})
     if user is not None:
         if user.change_email(token):
             db.session.commit()
+            status = 'ok'
             message = 'Sähköpostiosoitteesi on vaihdettu. Kirjaudu uudelleen.'  
         else:
+            status = 'virhe'
             message = 'Sähköpostiosoitteen vaihto epäonnistui.'
-        encoded_params = urlencode({ 'message':message })
+        encoded_params = urlencode({ 'status':status,'message':message })
         return redirect(app.config['REACT_LOGIN'] + '?' + encoded_params)
-    
+    status = 'virhe'
+    message = 'Väärä linkki'
+    encoded_params = urlencode({ 'status':status,'message':message })
+    return redirect(app.config['REACT_LOGIN'] + '?' + encoded_params)
     

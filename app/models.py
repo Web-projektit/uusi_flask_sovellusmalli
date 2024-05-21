@@ -128,7 +128,7 @@ class User(UserMixin, db.Model):
     def verify_auth_token(token,expiration=3600):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
-            data = s.loads(token.encode('utf-8'),max_age=expiration)
+            data = s.loads(token,max_age=expiration)
         except Exception as e:
             print(f"verify_auth_token: {e}")
             return None
