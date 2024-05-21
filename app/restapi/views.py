@@ -13,8 +13,18 @@ from flask_wtf.csrf import generate_csrf,CSRFError
 from urllib.parse import urlencode
 from itsdangerous import URLSafeTimedSerializer as Serializer
 
-def getUser():
+def getUser(token=None):
     # Funktiolla voidaan hakea user suojatulla reitillä
+    referer = request.args.get('utm_source')
+    if token is not None:
+        app = current_app._get_current_object()
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+            token_user = User.query.get(data.get('reset'))
+            return token_user
+        except:
+            return None
     return g.current_user
 
 def createResponse(message):
@@ -159,7 +169,7 @@ def confirm(token):
         data = s.loads(token)
     except:
         message = 'Vahvistuslinkki on virheellinen tai se ei ole enää voimassa'
-        if referer is not None:
+        if referer != 'email':
             return jsonify({'status':"virhe",'message':message, 'referer':referer})
         else:
             encoded_params = urlencode({ 'message':message })
@@ -186,7 +196,7 @@ def confirm(token):
         message = "Sähköpostiosoite on vahvistettu"
         # redirect_url = f"{app.config['REACT_ORIGIN']}?message={message}"
         # return redirect(redirect_url)
-        if referer is not None:
+        if referer != 'email':
             # Kirjautumisen kautta
             return jsonify({'status':"ok",'message':message,'confirmed':'1','referer':referer})
         else:
@@ -200,7 +210,7 @@ def confirm(token):
         # redirect_url = f"{app.config['REACT_UNCONFIRMED']}?message={message}"
         # return redirect(redirect_url)
         # return jsonify({'ok':"Virhe",'message':message})
-        if referer is not None:
+        if referer != 'email':
             # Kirjautumisen kautta
             return jsonify({'status':"virhe",'message':message, 'referer':referer})
         else:
@@ -226,11 +236,12 @@ def resend_confirmation():
 @restapi.route('/change-password', methods=['GET', 'POST'])
 @auth.login_required
 def change_password():
+    user = getUser()
     form = ChangePasswordForm()
     if form.validate_on_submit():
-        if current_user.verify_password(form.old_password.data):
-            current_user.password = form.password.data
-            db.session.add(current_user)
+        if user.verify_password(form.old_password.data):
+            user.password = form.password.data
+            db.session.add(user)
             db.session.commit()
             flash('Your password has been updated.')
             return redirect(url_for('main.index'))
@@ -328,14 +339,19 @@ def change_email_request():
             return jsonify({'status':'virhe','message':'Väärä sähköposti'})
     return jsonify({'status':'virhe','message': 'Virheelliset tiedot', 'errors': form.errors})
 
-'''
-@restapi.route('/change_email/<token>')
-@login_required
+
+@restapi.route('/change_email/<token>',methods=['GET'])
+#@auth.login_required
 def change_email(token):
-    if current_user.change_email(token):
-        db.session.commit()
-        flash('Your email address has been updated.')
-    else:
-        flash('Invalid request.')
-    return redirect(url_for('main.index'))
-    '''
+    app = current_app._get_current_object()
+    user = getUser(token)
+    if user is not None:
+        if user.change_email(token):
+            db.session.commit()
+            message = 'Sähköpostiosoitteesi on vaihdettu. Kirjaudu uudelleen.'  
+        else:
+            message = 'Sähköpostiosoitteen vaihto epäonnistui.'
+        encoded_params = urlencode({ 'message':message })
+        return redirect(app.config['REACT_LOGIN'] + '?' + encoded_params)
+    
+    
