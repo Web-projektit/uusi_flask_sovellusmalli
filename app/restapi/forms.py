@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, TextAreaField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, Regexp, EqualTo
 from wtforms import ValidationError
 from ..models import User
@@ -70,3 +70,30 @@ class ChangeEmailForm(FlaskForm):
     def validate_email(self, field):
         if User.query.filter_by(email=field.data.lower()).first():
             raise ValidationError('Sähköpostiosoite on varattu')
+
+class EditProfileForm(FlaskForm):
+    email = StringField('Email', validators=[CustomDataRequired('sähköpostiosoite'), Length(1, 64),
+                                             Email()])
+    username = StringField('Username', validators=[
+        CustomDataRequired('käyttäjätunnus'), Length(1, 64),
+        Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
+               'Käytä vain kirjaimia, numeroita, pisteitä tai '
+               'alaviivoja')])
+    name = StringField('Real name', validators=[Length(0, 64)])
+    location = StringField('Location', validators=[Length(0, 64)])
+    about_me = TextAreaField('About me')
+    submit = SubmitField('Submit')
+
+    def __init__(self, user, *args, **kwargs):
+        super(EditProfileForm, self).__init__(*args, **kwargs)
+        self.user = user
+
+    def validate_email(self, field):
+        if field.data != self.user.email and \
+                User.query.filter_by(email=field.data).first():
+            raise ValidationError('Sähköpostiosoite on varattu')
+
+    def validate_username(self, field):
+        if field.data != self.user.username and \
+                User.query.filter_by(username=field.data).first():
+            raise ValidationError('Käyttäjätunnus on varattu')

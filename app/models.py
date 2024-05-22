@@ -186,6 +186,17 @@ class User(UserMixin, db.Model):
         self.last_seen = datetime.now(timezone.utc)
         db.session.commit()
 
+    def to_json(self):
+        json_user = {
+            'email': self.email,
+            'username': self.username,
+            'location': self.location,
+            'about_me': self.about_me,
+            'member_since': self.member_since,
+            'last_seen': self.last_seen,
+            }
+        return json_user
+
     def __repr__(self):
         return '<User %r>' % self.username
 

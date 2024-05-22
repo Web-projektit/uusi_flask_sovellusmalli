@@ -7,7 +7,8 @@ from .. import db
 from ..models import User
 from ..email import send_email
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm,\
-    PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm
+    PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm, \
+    EditProfileForm
 from .authentication import auth
 from flask_wtf.csrf import generate_csrf,CSRFError
 from urllib.parse import urlencode
@@ -28,7 +29,16 @@ def getUser(token_id=None):
         except Exception as e:
             print(f"\ngetUser,Exception:{e}\n")
             return None
+    print(f"\ngetUser,current_user:{g.current_user.email}\n")    
     return g.current_user
+
+def hasChanged(user,form):
+    pois = ['csrf_token','submit']
+    for field in form:
+        if not field.name in pois and getattr(user, field.name) != field.data:
+            return(True)
+    return False
+
 
 def createResponse(message):
     # CORS:n vaatimat Headerit
@@ -266,10 +276,12 @@ def password_reset_request():
                 'Reset Your Password', \
                 'restapi/email/reset_password', \
                 linkki=linkki,user=user)
-            message = 'An email with instructions to reset your password has been sent to you.'
-            return jsonify({'ok':True,'message':message})
-        return jsonify({'virhe': 'Käyttäjää ei löytynyt'})
-    return jsonify({'virhe': 'Invalid data', 'errors': form.errors})
+            message = 'Sähköpostiisi on lähetetty viesti, jonka linkistä voit uusia salasanasi.'
+            return jsonify({'status':'ok','message':message})
+        message = 'Käyttäjää ei löydy.'
+        return jsonify({'status':'virhe','message':message})
+    message = 'Virheelliset tiedot'
+    return jsonify({'status':'virhe','message':message, 'errors': form.errors})
 
 
 @restapi.route('/reset/<token>', methods=['GET', 'POST'])
@@ -283,7 +295,7 @@ def password_reset(token):
     except:
         message = 'Salasanan uusimislinkki on virheellinen tai se ei ole enää voimassa.'
         if referer != 'email':
-            return jsonify({'ok':"Virhe",'message':message, 'referer':referer})
+            return jsonify({'status':'ok','message':message, 'referer':referer})
         else:
             encoded_params = urlencode({ 'message':message })
             return redirect(app.config['REACT_RESET_PASSWORD'] + "?" + encoded_params) 
@@ -291,7 +303,7 @@ def password_reset(token):
     if current_user is None:
         message = 'Käyttäjää ei löydy.'
         if referer != 'email':
-            return jsonify({'ok':False,'virhe':True,'message': message}), 404
+            return jsonify({'status':'virhe','message': message}), 404
         else:
             encoded_params = urlencode({ 'token':token,'message':message })
             return redirect(app.config['REACT_RESET_PASSWORD'] + "?" + encoded_params) 
@@ -341,11 +353,13 @@ def change_email_request():
                 user=user,linkki=linkki)
                 # user=user, token=token, utm_source='email' )
             message = "Uuteen sähköpostiosoitteeseesi on lähetetty viesti, jonka \
-                       linkistä voit vahvistaa sen."       
+                       linkistä voit vahvistaa sen"       
             return jsonify({'status':'ok','message': message})
         else:
-            return jsonify({'status':'virhe','message':'Väärä sähköposti'})
-    return jsonify({'status':'virhe','message': 'Virheelliset tiedot', 'errors': form.errors})
+            message = 'Väärä sähköpostiosoite'
+            return jsonify({'status':'virhe','message':message})
+    message = 'Virheelliset tiedot'    
+    return jsonify({'status':'virhe','message': message, 'errors': form.errors})
 
 
 @restapi.route('/change_email/<token>',methods=['GET'])
@@ -368,3 +382,53 @@ def change_email(token):
     encoded_params = urlencode({ 'status':status,'message':message })
     return redirect(app.config['REACT_LOGIN'] + '?' + encoded_params)
     
+@restapi.route('/user',methods=['GET'])
+@auth.login_required
+def get_user():
+    # Huom. user.html:ssä user.last_seen ilmaisee ping-metodilla annetun ajan,
+    # eikä tietokantaan tallennettua aikaa.
+    user = getUser()
+    print(f"\nuser:{user.email}\n")
+    return jsonify({'status':'ok','data':user.to_json()})
+
+
+@restapi.route('/profiili', methods=['GET', 'POST'])
+@auth.login_required
+def profiili():
+    user = getUser()
+    data = request.get_json()
+    form = EditProfileForm(user=user,data=data)
+    if form.validate_on_submit():
+        # Huom. sähköpostiosoite ja käyttäjätunnus eivät ole 
+        # validoinnin jälkeen varattuja.
+        if user is not None:
+            old_email = user.email
+            new_email = form.email.data.lower()
+            form.email.data = new_email
+            # Tässä tallentaan muut kentät paitsi sähköposti,
+            # joka tallennetaan erikseen vahvistuslinkistä.
+            if not hasChanged(user,form):
+                message = 'Ei muutoksia'
+                return jsonify({'status':'ok','message':message})
+            form.populate_obj(user)
+            user.email = old_email
+            db.session.add(user)
+            db.session.commit()
+            if old_email != new_email:
+                token = user.generate_email_change_token(new_email)
+                linkki = url_for('restapi.change_email', token=token, utm_source='email', _external=True)
+                send_email(user.email, \
+                 'Confirm your email address', \
+                'restapi/email/change_email', \
+                linkki=linkki,user=user)
+                message = 'Uuteen sähköpostiosoitteeseesi on lähetetty viesti, jonka \
+                           linkistä voit vahvistaa sen.'
+                return jsonify({'status':'ok','message':message})
+            message = 'Profiilisi on päivitetty.'
+            return jsonify({'status':'ok','message':message})
+        else:
+            message = 'Käyttäjää ei löytynyt'
+            return jsonify({'status':'virhe', 'message' : message})
+    message = 'Virheelliset tiedot'
+    return jsonify({'status':'virhe','message':message, 'errors': form.errors})
+
