@@ -13,6 +13,7 @@ from .authentication import auth
 from flask_wtf.csrf import generate_csrf,CSRFError
 from urllib.parse import urlencode
 from itsdangerous import URLSafeTimedSerializer as Serializer
+from sqlalchemy import text
 
 def getUser(token_id=None):
     # Funktiolla voidaan hakea user suojatulla reitillä
@@ -432,3 +433,41 @@ def profiili():
     message = 'Virheelliset tiedot'
     return jsonify({'status':'virhe','message':message, 'errors': form.errors})
 
+
+# Käyttäjien listaaminen on vain adminille
+@restapi.route('/users',methods=['GET'])
+@auth.login_required
+def get_users():
+    user = getUser()
+    if user.is_administrator() or True:
+        users = User.query.all()
+        return jsonify({'status':'ok','data':[user.to_json() for user in users]})
+    return jsonify({'status':'virhe','message':'Ei oikeuksia'}), 403
+
+@restapi.route('/save_active',methods=['POST'])
+@auth.login_required
+def save_active():
+    data = request.get_json()
+    if len(data) > 0:
+        query_start = "INSERT INTO users (id,active) VALUES "
+        query_end = " ON DUPLICATE KEY UPDATE active = VALUES(active)"
+        query_values = ""
+        # active = request.form.getlist('active')
+        for item in data:
+            id = item.get('id')
+            active = item.get('active')
+            query_values += f"({id},{active}),"
+        query_values = query_values[:-1]
+        query = query_start + query_values + query_end
+        print("\n"+query+"\n")
+        '''INSERT INTO users (id,active) VALUES (6,1),(7,1) 
+            ON DUPLICATE KEY UPDATE active = VALUES(active)
+        '''
+        # result = db.session.execute('SELECT * FROM my_table WHERE my_column = :val', {'val': 5})
+        db.session.execute(text(query))
+        db.session.commit()
+        message = 'Käyttäjien aktiivisuustila on tallennettu'
+        return jsonify({'status':'ok','message':message})
+    else:
+        message = 'Käyttäjälista puuttuu.'
+        return jsonify({'status':'virhe','message':message})
