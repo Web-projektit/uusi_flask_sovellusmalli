@@ -31,7 +31,7 @@ class DevelopmentConfig(Config):
     DB_PORT = os.environ.get('DB_PORT') or '3306'
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + DB_USERNAME + ':' + DB_PASSWORD + '@' + DB_SERVER + ':' + DB_PORT + '/' + DB_NAME
     WTF_CSRF_ENABLED = True
-    REACT_ORIGIN = 'http://localhost:5173/'
+    REACT_ORIGIN = os.environ.get('REACT_ORIGIN') or 'http://localhost:5173/'
     REACT_LOGIN = REACT_ORIGIN + 'kirjautuminen'
     REACT_UNCONFIRMED = REACT_ORIGIN + 'unconfirmed'
     REACT_CONFIRMED = REACT_ORIGIN + 'confirmed'
