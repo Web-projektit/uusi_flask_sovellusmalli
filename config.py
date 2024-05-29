@@ -16,6 +16,10 @@ class Config:
     SOVELLUSMALLI_ADMIN = os.environ.get('SOVELLUSMALLI_ADMIN')
     SOVELLUSMALLI_POSTS_PER_PAGE = 25
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # Huom. tämä saatetaan tarvita Access-Control-Allow-Credentials: true 
+    # -headerin lisäämiseksi vastauksiin CORS(app, supports_credentials=True) -komentoa 
+    # käytettäessä, mikä puolestaan on tarpeen, jos halutaan käyttää sessioita.
+    CORS_SUPPORTS_CREDENTIALS = True
 
     @staticmethod
     def init_app(app):
@@ -58,6 +62,5 @@ config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
-
     'default': DevelopmentConfig
 }
