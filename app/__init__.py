@@ -42,6 +42,7 @@ def create_app(config_name):
     app.register_blueprint(restapi_blueprint, url_prefix='/restapi')
 
     # Make sure you're calling CORS(app, supports_credentials=True, expose_headers=["Content-Type", "X-CSRFToken", "Authorization"]) after all routes and blueprints have been registered.
+    # Huom. CORS(app) asettaa Access-Control-Allow-Origin-headerin automaattisesti.
     CORS(app, supports_credentials=True, expose_headers=["Content-Type", "X-CSRFToken", "Authorization"])
  
     return app
