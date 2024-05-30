@@ -90,13 +90,16 @@ def get_csrf():
     # response.headers.set('Access-Control-Expose-Headers','X-CSRFToken') 
     response.headers.set("X-CSRFToken", token)
     # response.headers['Access-Control-Allow-Credentials'] = 'true'
+    '''
     app = current_app._get_current_object()
     response.set_cookie(app.config['CSRF_COOKIE_NAME'], 
         token, 
         secure=app.config['CSRF_COOKIE_SECURE'],
         httponly=app.config['CSRF_COOKIE_HTTPONLY'],
         samesite=app.config['CSRF_COOKIE_SAMESITE'])
+        '''
     return response
+
 
 @restapi.route('/unconfirmed')
 def unconfirmed():

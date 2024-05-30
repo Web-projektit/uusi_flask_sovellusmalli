@@ -8,6 +8,7 @@ from flask_login import LoginManager
 from config import config
 from flask_wtf.csrf import CSRFProtect
 from flask_cors import CORS
+# from .custom_session_interface import CustomSessionInterface
 
 bootstrap = Bootstrap()
 # fa = FontAwesome()
@@ -22,6 +23,7 @@ csrf = CSRFProtect()
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
+    # app.session_interface = CustomSessionInterface()
     config[config_name].init_app(app)
 
     bootstrap.init_app(app)
@@ -41,10 +43,10 @@ def create_app(config_name):
     from .restapi import restapi as restapi_blueprint
     app.register_blueprint(restapi_blueprint, url_prefix='/restapi')
     
-    # CORS(restapi, supports_credentials=True, expose_headers=["Content-Type", "X-CSRFToken", "Authorization"],origins=['http://localhost'])
+    # CORS(app, supports_credentials=True, expose_headers=["Content-Type", "X-CSRFToken", "Authorization"],origins=['http://localhost:5173'])
     CORS(app, supports_credentials=True, expose_headers=["Content-Type", "X-CSRFToken", "Authorization"])
- 
-
+    
+  
     # Make sure you're calling CORS(app, supports_credentials=True, expose_headers=["Content-Type", "X-CSRFToken", "Authorization"]) after all routes and blueprints have been registered.
     # Huom. CORS(app) asettaa Access-Control-Allow-Origin-headerin automaattisesti.
     
