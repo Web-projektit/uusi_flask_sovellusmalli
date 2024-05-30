@@ -47,9 +47,9 @@ def createResponse(message):
     # CORS:n vaatimat Headerit
     default_origin = 'http://localhost:3000'
     origin = request.headers.get('Origin',default_origin)
-    response = make_response(jsonify(message))  
+    response = jsonify(message)
     # Määritetään CORS-alustuksessa
-    # response.headers.set('Access-Control-Allow-Credentials','true')
+    response.headers.set('Access-Control-Allow-Credentials','true')
     # Jos vaaditaan muuta kuin CORS-alustuksen '*'
     response.headers.set('Access-Control-Allow-Origin',origin) 
     return response
