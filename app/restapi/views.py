@@ -14,6 +14,8 @@ from flask_wtf.csrf import generate_csrf,CSRFError
 from urllib.parse import urlencode
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from sqlalchemy import text
+# from flask_cors import cross_origin
+
 
 def getUser(token_id=None):
     # Funktiolla voidaan hakea user suojatulla reitillä
@@ -99,6 +101,7 @@ def unconfirmed():
     return redirect(app.config['REACT_UNCONFIRMED'])
 
 @restapi.route('/login', methods=['GET', 'POST'])
+# @cross_origin(supports_credentials=True)
 def login():
     data = request.get_json()
     if data is not None:
@@ -120,6 +123,7 @@ def login():
                         response = jsonify({'status':'ok','message':message,'confirmed':'1'})
                     else:
                         response = jsonify({'status':'ok','message':message})
+                    # response.headers['Access-Control-Allow-Credentials'] = 'true'
                     response.headers['Authorization'] = 'Bearer ' + token
                     return response
                 return redirect(next)
@@ -130,10 +134,12 @@ def login():
                 message = 'Väärät tunnukset'
                 response = jsonify({'status':'virhe','message':message})
                 # response.status_code = 200
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
                 return response 
         else:
             print("validointivirheet:"+str(form.errors))
             response = jsonify({'status':'virhe','errors':form.errors})
+            response.headers['Access-Control-Allow-Credentials'] = 'true'
             return response
     return jsonify({'status':'virhe','message':'Tiedot puuttuvat'}), 400
 

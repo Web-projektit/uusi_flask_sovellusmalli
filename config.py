@@ -43,6 +43,10 @@ class DevelopmentConfig(Config):
     REACT_RESET_PASSWORD = REACT_ORIGIN + 'reset_password'
     #SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
     #    'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+    # CSRF_TRUSTED_ORIGINS = ['https://' + os.environ.get('WEBSITE_HOSTNAME')] 
+    ## CSRF_TRUSTED_ORIGINS = ['http://localhost'] 
+    # SESSION_COOKIE_SECURE = True
+    # SESSION_COOKIE_SAMESITE = 'None'
 
 class AzureConfig(DevelopmentConfig):
     DEBUG = False
