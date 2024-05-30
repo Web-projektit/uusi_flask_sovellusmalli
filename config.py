@@ -20,6 +20,10 @@ class Config:
     # -headerin lisäämiseksi vastauksiin CORS(app, supports_credentials=True) -komentoa 
     # käytettäessä, mikä puolestaan on tarpeen, jos halutaan käyttää sessioita.
     CORS_SUPPORTS_CREDENTIALS = True
+    # CSRF_COOKIE_NAME = 'csrf_token'
+    CSRF_COOKIE_SECURE = True
+    CSRF_COOKIE_HTTPONLY = True
+    CSRF_COOKIE_SAMESITE = 'None'
 
     @staticmethod
     def init_app(app):
